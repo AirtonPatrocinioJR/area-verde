@@ -65,6 +65,9 @@ class DatabaseSeeder extends Seeder
             ['telefone' => '11987654321'],
             [
                 'nome' => 'Maria Exemplo',
+                'cidade' => 'São Paulo',
+                'idade' => 32,
+                'genero' => 'feminino',
                 'saldo' => 0,
             ],
         );

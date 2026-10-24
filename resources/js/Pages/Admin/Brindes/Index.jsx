@@ -1,6 +1,7 @@
 import { Head, router, useForm } from '@inertiajs/react';
 import { useState } from 'react';
 import AdminLayout from '@/Layouts/AdminLayout';
+import { CampoNumero } from '@/Components/CampoNumero';
 import { formatSemente } from '@/lib/format';
 import {
     AlertDialog,
@@ -221,15 +222,12 @@ function BrindeFormDialog({ open, onOpenChange, brinde, onSuccess }) {
                     </Field>
                     <Field data-invalid={Boolean(errors.valor) || undefined}>
                         <FieldLabel htmlFor="brinde-valor">Valor (Sementes)</FieldLabel>
-                        <Input
+                        <CampoNumero
                             id="brinde-valor"
                             name="valor"
-                            type="number"
-                            step="1"
-                            min="1"
-                            inputMode="numeric"
                             value={data.valor}
-                            onChange={(e) => setData('valor', e.target.value)}
+                            onChange={(v) => setData('valor', v)}
+                            min={1}
                             required
                             aria-invalid={Boolean(errors.valor)}
                         />
@@ -237,13 +235,12 @@ function BrindeFormDialog({ open, onOpenChange, brinde, onSuccess }) {
                     </Field>
                     <Field data-invalid={Boolean(errors.estoque) || undefined}>
                         <FieldLabel htmlFor="brinde-estoque">Estoque</FieldLabel>
-                        <Input
+                        <CampoNumero
                             id="brinde-estoque"
                             name="estoque"
-                            type="number"
-                            min="0"
                             value={data.estoque}
-                            onChange={(e) => setData('estoque', e.target.value)}
+                            onChange={(v) => setData('estoque', v)}
+                            min={0}
                             required
                             aria-invalid={Boolean(errors.estoque)}
                         />

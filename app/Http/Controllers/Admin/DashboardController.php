@@ -29,7 +29,7 @@ class DashboardController extends Controller
         return Inertia::render('Admin/Dashboard', [
             'totais' => [
                 'clientes' => Cliente::count(),
-                'semente_circulacao' => Cliente::sum('saldo'),
+                'florim_circulacao' => Cliente::sum('saldo'),
                 'transacoes' => Transacao::count(),
             ],
             'ultimas' => $ultimas,

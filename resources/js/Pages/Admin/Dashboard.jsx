@@ -1,9 +1,9 @@
 import { Head, Link } from '@inertiajs/react';
+import { LeafIcon, RecycleIcon, ShoppingBagIcon } from 'lucide-react';
 import AdminLayout from '@/Layouts/AdminLayout';
-import { formatSemente } from '@/lib/format';
+import { formatFlorim, formatValorFlorim } from '@/lib/format';
 import { Button } from '@/Components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Components/ui/card';
-import { Separator } from '@/Components/ui/separator';
 import { cn } from '@/lib/utils';
 
 export default function Dashboard({ totais, ultimas }) {
@@ -12,46 +12,73 @@ export default function Dashboard({ totais, ultimas }) {
             <Head title="Painel" />
             <div className="mb-8 grid gap-4 sm:grid-cols-3">
                 <Stat label="Clientes" value={totais.clientes} />
-                <Stat label="Sementes em circulação" value={formatSemente(totais.semente_circulacao)} />
+                <Stat label="Florins em circulação" value={formatFlorim(totais.florim_circulacao)} />
                 <Stat label="Transações" value={totais.transacoes} />
             </div>
-            <div className="mb-4 flex items-center justify-between">
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
                 <h2 className="text-xl font-semibold">Últimas movimentações</h2>
-                <Button asChild variant="link" size="sm" className="px-0">
-                    <Link href="/admin/clientes">Buscar cliente</Link>
-                </Button>
+                <div className="flex gap-2">
+                    <Button asChild variant="outline" size="sm">
+                        <Link href="/admin/receber">
+                            <RecycleIcon />
+                            Receber recicláveis
+                        </Link>
+                    </Button>
+                    <Button asChild size="sm">
+                        <Link href="/admin/vender">
+                            <ShoppingBagIcon />
+                            Nova venda
+                        </Link>
+                    </Button>
+                </div>
             </div>
             {ultimas.length === 0 ? (
                 <p className="text-muted-foreground">Nenhuma transação ainda.</p>
             ) : (
-                <Card className="gap-0 py-0">
-                    <CardContent className="p-0">
-                        <ul>
-                            {ultimas.map((t, index) => (
-                                <li key={t.id}>
-                                    {index > 0 && <Separator />}
-                                    <div className="flex justify-between gap-4 px-4 py-3 text-sm">
-                                        <div>
-                                            <p className="font-medium">{t.descricao}</p>
+                <ul className="space-y-2">
+                    {ultimas.map((t) => {
+                        const isCredito = t.tipo === 'credito';
+                        return (
+                            <li key={t.id}>
+                                <Card className="py-3">
+                                    <CardContent className="flex items-center gap-3 px-4 py-0">
+                                        <div
+                                            className={cn(
+                                                'flex size-10 shrink-0 items-center justify-center rounded-full',
+                                                isCredito
+                                                    ? 'bg-primary/15 text-primary'
+                                                    : 'bg-soil/15 text-soil',
+                                            )}
+                                        >
+                                            {isCredito ? (
+                                                <LeafIcon className="size-4" />
+                                            ) : (
+                                                <ShoppingBagIcon className="size-4" />
+                                            )}
+                                        </div>
+                                        <div className="min-w-0 flex-1">
+                                            <p className="font-medium text-foreground">
+                                                {t.descricao}
+                                            </p>
                                             <p className="text-xs text-muted-foreground">
                                                 {t.cliente} · {t.created_at}
                                             </p>
                                         </div>
-                                        <span
+                                        <p
                                             className={cn(
                                                 'shrink-0 font-semibold tabular-nums',
-                                                t.tipo === 'credito' ? 'text-primary' : 'text-soil',
+                                                isCredito ? 'text-primary' : 'text-soil',
                                             )}
                                         >
-                                            {t.tipo === 'credito' ? '+' : '−'}
-                                            {formatSemente(t.valor_total)}
-                                        </span>
-                                    </div>
-                                </li>
-                            ))}
-                        </ul>
-                    </CardContent>
-                </Card>
+                                            {isCredito ? '+' : '−'}
+                                            {formatValorFlorim(t.valor_total)}
+                                        </p>
+                                    </CardContent>
+                                </Card>
+                            </li>
+                        );
+                    })}
+                </ul>
             )}
         </AdminLayout>
     );

@@ -30,6 +30,9 @@ class CarteiraTest extends TestCase
         $this->cliente = Cliente::create([
             'nome' => 'Cliente Teste',
             'telefone' => '11900001111',
+            'cidade' => 'São Paulo',
+            'idade' => 30,
+            'genero' => 'outro',
             'saldo' => 0,
         ]);
     }
@@ -47,9 +50,14 @@ class CarteiraTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->operador, 'web')
-            ->post(route('admin.clientes.creditar', $this->cliente), [
-                'reciclavel_id' => $reciclavel->id,
-                'quantidade' => 10,
+            ->post(route('admin.receber.store'), [
+                'cliente_id' => $this->cliente->id,
+                'itens' => [
+                    [
+                        'reciclavel_id' => $reciclavel->id,
+                        'quantidade' => 10,
+                    ],
+                ],
             ]);
 
         $response->assertRedirect();
@@ -63,6 +71,40 @@ class CarteiraTest extends TestCase
         Event::assertDispatched(CarteiraAtualizada::class);
     }
 
+    public function test_recebimento_multiplos_itens(): void
+    {
+        Event::fake([CarteiraAtualizada::class]);
+
+        $pet = Reciclavel::create([
+            'nome' => 'PET',
+            'descricao' => null,
+            'valor' => 1,
+            'unidade' => 'un',
+            'ativo' => true,
+        ]);
+        $papel = Reciclavel::create([
+            'nome' => 'Papelão',
+            'descricao' => null,
+            'valor' => 2,
+            'unidade' => 'kg',
+            'ativo' => true,
+        ]);
+
+        $this->actingAs($this->operador, 'web')
+            ->post(route('admin.receber.store'), [
+                'cliente_id' => $this->cliente->id,
+                'itens' => [
+                    ['reciclavel_id' => $pet->id, 'quantidade' => 5],
+                    ['reciclavel_id' => $papel->id, 'quantidade' => 2],
+                ],
+            ])
+            ->assertRedirect();
+
+        $this->cliente->refresh();
+        $this->assertEquals('9.00', $this->cliente->saldo);
+        $this->assertEquals(2, $this->cliente->transacoes()->count());
+    }
+
     public function test_debito_bloqueado_por_saldo_insuficiente(): void
     {
         $brinde = Brinde::create([
@@ -74,14 +116,19 @@ class CarteiraTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->operador, 'web')
-            ->from(route('admin.clientes.show', $this->cliente))
-            ->post(route('admin.clientes.debitar', $this->cliente), [
-                'brinde_id' => $brinde->id,
-                'quantidade' => 1,
+            ->from(route('admin.vender'))
+            ->post(route('admin.vender.store'), [
+                'cliente_id' => $this->cliente->id,
+                'itens' => [
+                    [
+                        'brinde_id' => $brinde->id,
+                        'quantidade' => 1,
+                    ],
+                ],
             ]);
 
         $response->assertRedirect();
-        $response->assertSessionHasErrors('quantidade');
+        $response->assertSessionHasErrors('itens');
         $this->cliente->refresh();
         $this->assertEquals('0.00', $this->cliente->saldo);
         $brinde->refresh();
@@ -101,14 +148,19 @@ class CarteiraTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->operador, 'web')
-            ->from(route('admin.clientes.show', $this->cliente))
-            ->post(route('admin.clientes.debitar', $this->cliente), [
-                'brinde_id' => $brinde->id,
-                'quantidade' => 1,
+            ->from(route('admin.vender'))
+            ->post(route('admin.vender.store'), [
+                'cliente_id' => $this->cliente->id,
+                'itens' => [
+                    [
+                        'brinde_id' => $brinde->id,
+                        'quantidade' => 1,
+                    ],
+                ],
             ]);
 
         $response->assertRedirect();
-        $response->assertSessionHasErrors('quantidade');
+        $response->assertSessionHasErrors('itens');
     }
 
     public function test_debito_baixa_estoque_e_saldo(): void
@@ -126,9 +178,14 @@ class CarteiraTest extends TestCase
         ]);
 
         $this->actingAs($this->operador, 'web')
-            ->post(route('admin.clientes.debitar', $this->cliente), [
-                'brinde_id' => $brinde->id,
-                'quantidade' => 2,
+            ->post(route('admin.vender.store'), [
+                'cliente_id' => $this->cliente->id,
+                'itens' => [
+                    [
+                        'brinde_id' => $brinde->id,
+                        'quantidade' => 2,
+                    ],
+                ],
             ])
             ->assertRedirect();
 
@@ -136,6 +193,12 @@ class CarteiraTest extends TestCase
         $brinde->refresh();
         $this->assertEquals('20.00', $this->cliente->saldo);
         $this->assertEquals(8, $brinde->estoque);
+        $this->assertDatabaseHas('movimentos_estoque', [
+            'brinde_id' => $brinde->id,
+            'tipo' => 'venda',
+            'quantidade' => -2,
+            'estoque_apos' => 8,
+        ]);
         Event::assertDispatched(CarteiraAtualizada::class);
     }
 }

@@ -1,8 +1,8 @@
 import { Link } from '@inertiajs/react';
-import { formatSemente, formatValorSemente } from '@/lib/format';
+import { LeafIcon, ShoppingBagIcon } from 'lucide-react';
+import { formatValorFlorim } from '@/lib/format';
 import { Button } from '@/Components/ui/button';
-import { Card, CardContent, CardFooter } from '@/Components/ui/card';
-import { Separator } from '@/Components/ui/separator';
+import { Card, CardContent } from '@/Components/ui/card';
 import { cn } from '@/lib/utils';
 
 export default function Extrato({ transacoes }) {
@@ -17,38 +17,58 @@ export default function Extrato({ transacoes }) {
     }
 
     return (
-        <Card className="gap-0 py-0">
-            <CardContent className="p-0">
-                <ul>
-                    {items.map((t, index) => (
+        <div>
+            <ul className="space-y-2">
+                {items.map((t) => {
+                    const isCredito = t.tipo === 'credito';
+                    return (
                         <li key={t.id}>
-                            {index > 0 && <Separator />}
-                            <div className="flex items-start justify-between gap-4 px-4 py-3">
-                                <div>
-                                    <p className="font-medium text-foreground">{t.descricao}</p>
-                                    <p className="text-xs text-muted-foreground">{t.created_at}</p>
-                                </div>
-                                <div className="shrink-0 text-right">
-                                    <p
+                            <Card className="py-3">
+                                <CardContent className="flex items-center gap-3 px-4 py-0">
+                                    <div
                                         className={cn(
-                                            'font-semibold tabular-nums',
-                                            t.tipo === 'credito' ? 'text-primary' : 'text-soil',
+                                            'flex size-10 shrink-0 items-center justify-center rounded-full',
+                                            isCredito
+                                                ? 'bg-primary/15 text-primary'
+                                                : 'bg-soil/15 text-soil',
                                         )}
                                     >
-                                        {t.tipo === 'credito' ? '+' : '−'}
-                                        {formatValorSemente(t.valor_total)}
+                                        {isCredito ? (
+                                            <LeafIcon className="size-4" />
+                                        ) : (
+                                            <ShoppingBagIcon className="size-4" />
+                                        )}
+                                    </div>
+                                    <div className="min-w-0 flex-1">
+                                        <p className="font-medium text-foreground">
+                                            {t.rotulo}
+                                            <span className="text-muted-foreground">
+                                                {' '}
+                                                · {t.item}
+                                            </span>
+                                        </p>
+                                        <p className="text-xs text-muted-foreground">
+                                            {t.created_at}
+                                        </p>
+                                    </div>
+                                    <p
+                                        className={cn(
+                                            'shrink-0 font-semibold tabular-nums',
+                                            isCredito ? 'text-primary' : 'text-soil',
+                                        )}
+                                    >
+                                        {isCredito ? '+' : '−'}
+                                        {formatValorFlorim(t.valor_total)}
                                     </p>
-                                    <p className="text-xs text-muted-foreground">
-                                        Saldo: {formatSemente(t.saldo_apos)}
-                                    </p>
-                                </div>
-                            </div>
+                                </CardContent>
+                            </Card>
                         </li>
-                    ))}
-                </ul>
-            </CardContent>
+                    );
+                })}
+            </ul>
+
             {transacoes.links && transacoes.links.length > 3 && (
-                <CardFooter className="flex flex-wrap gap-2">
+                <div className="mt-4 flex flex-wrap gap-2">
                     {transacoes.links.map((link, i) =>
                         link.url ? (
                             <Button
@@ -70,8 +90,8 @@ export default function Extrato({ transacoes }) {
                             />
                         ),
                     )}
-                </CardFooter>
+                </div>
             )}
-        </Card>
+        </div>
     );
 }

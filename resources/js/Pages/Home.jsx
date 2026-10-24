@@ -1,4 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
+import { AssinaturaFlorim } from '@/Components/marca/AssinaturaFlorim';
+import { LogoAreaVerde } from '@/Components/marca/LogoAreaVerde';
 import { Button } from '@/Components/ui/button';
 
 export default function Home() {
@@ -7,38 +9,38 @@ export default function Home() {
             <Head title="Início" />
             <div className="relative flex min-h-screen flex-col overflow-hidden">
                 <div
-                    className="pointer-events-none absolute inset-0 opacity-40"
-                    style={{
-                        backgroundImage:
-                            'url("data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%232f6b3a\' fill-opacity=\'0.08\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")',
-                    }}
-                />
+                    className="pointer-events-none absolute -left-8 -top-8 size-48 opacity-25"
+                    aria-hidden
+                >
+                    <LogoAreaVerde variant="light" className="size-full rounded-full" />
+                </div>
                 <header className="relative z-10 mx-auto flex w-full max-w-4xl items-center justify-between px-4 py-6">
-                    <span className="text-2xl font-semibold text-leaf-dark">Área Verde</span>
+                    <LogoAreaVerde variant="light" className="size-14 rounded-full" />
                     <Button asChild variant="link" size="sm" className="text-muted-foreground">
                         <Link href="/admin/login">Área do operador</Link>
                     </Button>
                 </header>
                 <main className="relative z-10 mx-auto flex w-full max-w-4xl flex-1 flex-col justify-center px-4 pb-16 pt-8">
-                    <p className="mb-3 text-sm font-medium uppercase tracking-[0.2em] text-moss">
-                        Carteira em recicláveis
+                    <p className="mb-3 text-sm font-medium uppercase tracking-[0.2em] text-gold">
+                        Área Verde · Flor Atlântica
                     </p>
-                    <h1 className="max-w-xl text-5xl font-semibold leading-tight text-foreground sm:text-6xl">
+                    <h1 className="max-w-xl text-5xl font-semibold leading-tight text-leaf-dark sm:text-6xl">
                         Transforme recicláveis em{' '}
-                        <span className="text-primary">Semente</span>
+                        <span className="text-gold">Florins</span>
                     </h1>
                     <p className="mt-5 max-w-lg text-lg text-muted-foreground">
-                        Doe materiais recicláveis, acumule Sementes e resgate brindes. Sua carteira digital
-                        sustentável.
+                        Entregue materiais recicláveis, acumule Florins e compre produtos na loja.
+                        A moeda digital do Flor Atlântica.
                     </p>
                     <div className="mt-10 flex flex-wrap gap-3">
                         <Button asChild size="lg">
                             <Link href="/cadastro">Criar minha carteira</Link>
                         </Button>
-                        <Button asChild variant="outline" size="lg">
+                        <Button asChild variant="outline" size="lg" className="border-gold">
                             <Link href="/entrar">Entrar</Link>
                         </Button>
                     </div>
+                    <AssinaturaFlorim className="mt-16 items-start" />
                 </main>
             </div>
         </>

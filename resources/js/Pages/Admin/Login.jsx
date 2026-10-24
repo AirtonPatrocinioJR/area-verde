@@ -1,4 +1,6 @@
 import { Head, Link, useForm } from '@inertiajs/react';
+import { CircleAlertIcon } from 'lucide-react';
+import { LogoAreaVerde } from '@/Components/marca/LogoAreaVerde';
 import { Alert, AlertDescription } from '@/Components/ui/alert';
 import { Button } from '@/Components/ui/button';
 import { Card, CardContent } from '@/Components/ui/card';
@@ -6,7 +8,6 @@ import { Checkbox } from '@/Components/ui/checkbox';
 import { Field, FieldLabel } from '@/Components/ui/field';
 import { Input } from '@/Components/ui/input';
 import { Label } from '@/Components/ui/label';
-import { CircleAlertIcon } from 'lucide-react';
 
 export default function Login() {
     const { data, setData, post, processing, errors } = useForm({
@@ -24,11 +25,12 @@ export default function Login() {
         <div className="flex min-h-screen items-center justify-center px-4">
             <Head title="Login operador" />
             <div className="w-full max-w-md">
-                <div className="mb-8 text-center">
-                    <Link href="/" className="text-3xl font-semibold text-leaf-dark">
-                        Área Verde
+                <div className="mb-8 flex flex-col items-center text-center">
+                    <Link href="/">
+                        <LogoAreaVerde variant="light" className="mb-4 size-24 rounded-full" />
                     </Link>
-                    <p className="mt-2 text-muted-foreground">Acesso do operador</p>
+                    <h1 className="text-2xl font-semibold text-leaf-dark">Área Verde</h1>
+                    <p className="mt-1 text-muted-foreground">Acesso do operador</p>
                 </div>
                 <Card>
                     <CardContent>
@@ -67,7 +69,7 @@ export default function Login() {
                                     checked={data.remember}
                                     onCheckedChange={(checked) => setData('remember', checked === true)}
                                 />
-                                <Label htmlFor="remember" className="text-muted-foreground font-normal">
+                                <Label htmlFor="remember" className="font-normal text-muted-foreground">
                                     Lembrar de mim
                                 </Label>
                             </div>

@@ -12,9 +12,19 @@ class Cliente extends Authenticatable
 
     protected $table = 'clientes';
 
+    public const GENEROS = [
+        'feminino' => 'Feminino',
+        'masculino' => 'Masculino',
+        'outro' => 'Outro',
+        'nao_informar' => 'Prefiro não informar',
+    ];
+
     protected $fillable = [
         'nome',
         'telefone',
+        'cidade',
+        'idade',
+        'genero',
         'saldo',
     ];
 
@@ -26,6 +36,7 @@ class Cliente extends Authenticatable
     {
         return [
             'saldo' => 'decimal:2',
+            'idade' => 'integer',
         ];
     }
 
@@ -42,5 +53,14 @@ class Cliente extends Authenticatable
     public function setTelefoneAttribute(string $value): void
     {
         $this->attributes['telefone'] = self::normalizarTelefone($value);
+    }
+
+    public function generoLabel(): ?string
+    {
+        if ($this->genero === null) {
+            return null;
+        }
+
+        return self::GENEROS[$this->genero] ?? $this->genero;
     }
 }

@@ -75,9 +75,9 @@ class ReciclavelController extends Controller
             'ativo' => ['sometimes', 'boolean'],
         ], [
             'nome.required' => 'Informe o nome.',
-            'valor.required' => 'Informe o valor em Sementes.',
+            'valor.required' => 'Informe o valor em Florins.',
             'valor.integer' => 'O valor deve ser um número inteiro.',
-            'valor.min' => 'O valor deve ser pelo menos 1 Semente.',
+            'valor.min' => 'O valor deve ser pelo menos 1 Florim.',
             'unidade.required' => 'Informe a unidade de medida.',
         ]) + ['ativo' => $request->boolean('ativo', true)];
     }

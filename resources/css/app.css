@@ -48,6 +48,8 @@
     --color-soil: var(--soil);
     --color-warn: var(--warn);
     --color-moss: var(--moss);
+    --color-gold: var(--gold);
+    --color-floral: var(--floral);
     --radius-sm: calc(var(--radius) * 0.6);
     --radius-md: calc(var(--radius) * 0.8);
     --radius-lg: var(--radius);
@@ -58,82 +60,85 @@
 }
 
 :root {
-    /* Área Verde palette mapped to shadcn tokens */
-    --background: #f3f7f0;
-    --foreground: #1a2e1c;
-    --card: #ffffff;
-    --card-foreground: #1a2e1c;
-    --popover: #ffffff;
-    --popover-foreground: #1a2e1c;
-    --primary: #2f6b3a;
-    --primary-foreground: #ffffff;
-    --secondary: #eef5ea;
-    --secondary-foreground: #1a2e1c;
-    --muted: #eef5ea;
-    --muted-foreground: #5a6e5c;
-    --accent: #eef5ea;
-    --accent-foreground: #1a2e1c;
-    --destructive: #b42318;
-    --border: #c9d9c4;
-    --input: #c9d9c4;
-    --ring: #2f6b3a;
-    --chart-1: #2f6b3a;
-    --chart-2: #7a9a6d;
-    --chart-3: #8b5e3c;
-    --chart-4: #a15c07;
-    --chart-5: #1f4d28;
+    /* Flor Atlântica / Área Verde */
+    --background: #F7F3E8;
+    --foreground: #20382B;
+    --card: #FFFFFF;
+    --card-foreground: #20382B;
+    --popover: #FFFFFF;
+    --popover-foreground: #20382B;
+    --primary: #2E633F;
+    --primary-foreground: #FFFFFF;
+    --secondary: #EDE9DC;
+    --secondary-foreground: #20382B;
+    --muted: #EDE9DC;
+    --muted-foreground: #626B62;
+    --accent: #EDE9DC;
+    --accent-foreground: #20382B;
+    --destructive: #B53838;
+    --border: #DEDCCF;
+    --input: #DEDCCF;
+    --ring: #2E633F;
+    --chart-1: #2E633F;
+    --chart-2: #C59A45;
+    --chart-3: #965132;
+    --chart-4: #F4BC28;
+    --chart-5: #0D3324;
     --radius: 0.625rem;
-    --sidebar: #1a2e1c;
-    --sidebar-foreground: #eef5ea;
-    --sidebar-primary: #2f6b3a;
-    --sidebar-primary-foreground: #ffffff;
-    --sidebar-accent: #1f4d28;
-    --sidebar-accent-foreground: #eef5ea;
-    --sidebar-border: #c9d9c4;
-    --sidebar-ring: #2f6b3a;
-    /* Extra brand tokens */
-    --leaf-dark: #1f4d28;
-    --soil: #8b5e3c;
-    --warn: #a15c07;
-    --moss: #7a9a6d;
+    --sidebar: #0D3324;
+    --sidebar-foreground: #F7F3E8;
+    --sidebar-primary: #2E633F;
+    --sidebar-primary-foreground: #FFFFFF;
+    --sidebar-accent: #2E633F;
+    --sidebar-accent-foreground: #FFFFFF;
+    --sidebar-border: #1a4735;
+    --sidebar-ring: #C59A45;
+    --leaf-dark: #0D3324;
+    --soil: #965132;
+    --warn: #F4BC28;
+    --moss: #2E633F;
+    --gold: #C59A45;
+    --floral: #F4BC28;
 }
 
 .dark {
-    --background: #1a2e1c;
-    --foreground: #eef5ea;
-    --card: #1f4d28;
-    --card-foreground: #eef5ea;
-    --popover: #1f4d28;
-    --popover-foreground: #eef5ea;
-    --primary: #7a9a6d;
-    --primary-foreground: #1a2e1c;
-    --secondary: #1f4d28;
-    --secondary-foreground: #eef5ea;
-    --muted: #1f4d28;
-    --muted-foreground: #c9d9c4;
-    --accent: #1f4d28;
-    --accent-foreground: #eef5ea;
-    --destructive: #b42318;
+    --background: #0D3324;
+    --foreground: #F7F3E8;
+    --card: #1a4735;
+    --card-foreground: #F7F3E8;
+    --popover: #1a4735;
+    --popover-foreground: #F7F3E8;
+    --primary: #2E633F;
+    --primary-foreground: #FFFFFF;
+    --secondary: #1a4735;
+    --secondary-foreground: #F7F3E8;
+    --muted: #1a4735;
+    --muted-foreground: #DEDCCF;
+    --accent: #1a4735;
+    --accent-foreground: #F7F3E8;
+    --destructive: #B53838;
     --border: oklch(1 0 0 / 12%);
     --input: oklch(1 0 0 / 15%);
-    --ring: #7a9a6d;
-    --chart-1: #7a9a6d;
-    --chart-2: #2f6b3a;
-    --chart-3: #8b5e3c;
-    --chart-4: #a15c07;
-    --chart-5: #eef5ea;
-    --sidebar: #142218;
-    --sidebar-foreground: #eef5ea;
-    --sidebar-primary: #7a9a6d;
-    --sidebar-primary-foreground: #1a2e1c;
-    --sidebar-accent: #1f4d28;
-    --sidebar-accent-foreground: #eef5ea;
+    --ring: #C59A45;
+    --chart-1: #2E633F;
+    --chart-2: #C59A45;
+    --chart-3: #965132;
+    --chart-4: #F4BC28;
+    --chart-5: #F7F3E8;
+    --sidebar: #0A281C;
+    --sidebar-foreground: #F7F3E8;
+    --sidebar-primary: #2E633F;
+    --sidebar-primary-foreground: #FFFFFF;
+    --sidebar-accent: #2E633F;
+    --sidebar-accent-foreground: #FFFFFF;
     --sidebar-border: oklch(1 0 0 / 12%);
-    --sidebar-ring: #7a9a6d;
-    --leaf-dark: #7a9a6d;
-    --soil: #8b5e3c;
-    --warn: #a15c07;
-    --moss: #7a9a6d;
+    --sidebar-ring: #C59A45;
+    --leaf-dark: #F7F3E8;
+    --soil: #965132;
+    --warn: #F4BC28;
+    --moss: #2E633F;
+    --gold: #C59A45;
+    --floral: #F4BC28;
 }
 
 @layer base {
@@ -147,10 +152,7 @@
 
     body {
         min-height: 100vh;
-        background:
-            radial-gradient(ellipse 80% 50% at 10% -10%, #d4e8c8 0%, transparent 55%),
-            radial-gradient(ellipse 60% 40% at 100% 0%, #c5d9b8 0%, transparent 50%),
-            linear-gradient(180deg, #f3f7f0 0%, #e8f0e4 100%);
+        background-color: var(--background);
         @apply text-foreground;
     }
 }

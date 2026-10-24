@@ -15,12 +15,18 @@ class ClienteAuthTest extends TestCase
         $response = $this->post('/cadastro', [
             'nome' => 'João Silva',
             'telefone' => '(11) 91234-5678',
+            'cidade' => 'Santos',
+            'idade' => 25,
+            'genero' => 'masculino',
         ]);
 
         $response->assertRedirect(route('cliente.carteira'));
         $this->assertDatabaseHas('clientes', [
             'nome' => 'João Silva',
             'telefone' => '11912345678',
+            'cidade' => 'Santos',
+            'idade' => 25,
+            'genero' => 'masculino',
             'saldo' => 0,
         ]);
         $this->assertAuthenticated('cliente');
@@ -31,6 +37,9 @@ class ClienteAuthTest extends TestCase
         Cliente::create([
             'nome' => 'Ana',
             'telefone' => '11999998888',
+            'cidade' => 'SP',
+            'idade' => 22,
+            'genero' => 'feminino',
             'saldo' => 5,
         ]);
 
@@ -47,12 +56,18 @@ class ClienteAuthTest extends TestCase
         Cliente::create([
             'nome' => 'Existente',
             'telefone' => '11911112222',
+            'cidade' => 'SP',
+            'idade' => 40,
+            'genero' => 'outro',
             'saldo' => 0,
         ]);
 
         $response = $this->from('/cadastro')->post('/cadastro', [
             'nome' => 'Outro',
             'telefone' => '11911112222',
+            'cidade' => 'SP',
+            'idade' => 18,
+            'genero' => 'nao_informar',
         ]);
 
         $response->assertRedirect('/cadastro');

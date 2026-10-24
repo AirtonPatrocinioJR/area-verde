@@ -3,15 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Brinde;
 use App\Models\Cliente;
-use App\Models\Reciclavel;
-use App\Services\CarteiraService;
-use Illuminate\Http\RedirectResponse;
+use App\Models\Transacao;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
-use InvalidArgumentException;
 
 class ClienteController extends Controller
 {
@@ -36,6 +32,7 @@ class ClienteController extends Controller
                 'id' => $c->id,
                 'nome' => $c->nome,
                 'telefone' => $c->telefone,
+                'cidade' => $c->cidade,
                 'saldo' => $c->saldo,
             ]);
 
@@ -48,16 +45,21 @@ class ClienteController extends Controller
     public function show(Cliente $cliente): Response
     {
         $transacoes = $cliente->transacoes()
+            ->with(['reciclavel:id,nome,unidade', 'brinde:id,nome'])
             ->paginate(15)
             ->withQueryString()
             ->through(fn ($t) => [
                 'id' => $t->id,
                 'tipo' => $t->tipo,
                 'descricao' => $t->descricao,
+                'item' => $t->tipo === Transacao::TIPO_CREDITO
+                    ? ($t->reciclavel?->nome ?? 'Material')
+                    : ($t->brinde?->nome ?? 'Produto'),
+                'rotulo' => $t->tipo === Transacao::TIPO_CREDITO ? 'Entrega' : 'Compra',
                 'quantidade' => $t->quantidade,
                 'valor_total' => $t->valor_total,
                 'saldo_apos' => $t->saldo_apos,
-                'created_at' => $t->created_at?->format('d/m/Y H:i'),
+                'created_at' => $t->created_at?->timezone(config('app.timezone'))->format('d/m/Y · H:i'),
             ]);
 
         return Inertia::render('Admin/Clientes/Show', [
@@ -65,65 +67,12 @@ class ClienteController extends Controller
                 'id' => $cliente->id,
                 'nome' => $cliente->nome,
                 'telefone' => $cliente->telefone,
+                'cidade' => $cliente->cidade,
+                'idade' => $cliente->idade,
+                'genero_label' => $cliente->generoLabel(),
                 'saldo' => $cliente->saldo,
             ],
-            'reciclaveis' => Reciclavel::ativos()->orderBy('nome')->get(['id', 'nome', 'valor', 'unidade']),
-            'brindes' => Brinde::ativos()->where('estoque', '>', 0)->orderBy('nome')->get(['id', 'nome', 'valor', 'estoque']),
             'transacoes' => $transacoes,
         ]);
-    }
-
-    public function creditar(Request $request, Cliente $cliente, CarteiraService $carteira): RedirectResponse
-    {
-        $dados = $request->validate([
-            'reciclavel_id' => ['required', 'exists:reciclaveis,id'],
-            'quantidade' => ['required', 'numeric', 'min:0.01'],
-        ], [
-            'reciclavel_id.required' => 'Selecione o reciclável.',
-            'quantidade.required' => 'Informe a quantidade.',
-            'quantidade.min' => 'A quantidade deve ser maior que zero.',
-        ]);
-
-        $reciclavel = Reciclavel::findOrFail($dados['reciclavel_id']);
-
-        try {
-            $carteira->creditar(
-                $cliente,
-                $reciclavel,
-                $dados['quantidade'],
-                $request->user('web'),
-            );
-        } catch (InvalidArgumentException $e) {
-            return back()->withErrors(['quantidade' => $e->getMessage()]);
-        }
-
-        return back()->with('success', 'Crédito em Semente registrado.');
-    }
-
-    public function debitar(Request $request, Cliente $cliente, CarteiraService $carteira): RedirectResponse
-    {
-        $dados = $request->validate([
-            'brinde_id' => ['required', 'exists:brindes,id'],
-            'quantidade' => ['required', 'integer', 'min:1'],
-        ], [
-            'brinde_id.required' => 'Selecione o brinde.',
-            'quantidade.required' => 'Informe a quantidade.',
-            'quantidade.min' => 'A quantidade deve ser pelo menos 1.',
-        ]);
-
-        $brinde = Brinde::findOrFail($dados['brinde_id']);
-
-        try {
-            $carteira->debitar(
-                $cliente,
-                $brinde,
-                (int) $dados['quantidade'],
-                $request->user('web'),
-            );
-        } catch (InvalidArgumentException $e) {
-            return back()->withErrors(['quantidade' => $e->getMessage()]);
-        }
-
-        return back()->with('success', 'Débito em Semente registrado.');
     }
 }

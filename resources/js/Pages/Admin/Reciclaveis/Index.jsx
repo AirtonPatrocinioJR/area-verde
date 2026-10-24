@@ -1,7 +1,8 @@
 import { Head, router, useForm } from '@inertiajs/react';
 import { useState } from 'react';
 import AdminLayout from '@/Layouts/AdminLayout';
-import { formatSemente } from '@/lib/format';
+import { CampoNumero } from '@/Components/CampoNumero';
+import { formatFlorim } from '@/lib/format';
 import {
     AlertDialog,
     AlertDialogAction,
@@ -91,7 +92,7 @@ export default function Index({ reciclaveis }) {
                                         <p className="line-clamp-1 text-xs text-muted-foreground">{r.descricao}</p>
                                     )}
                                 </TableCell>
-                                <TableCell className="tabular-nums">{formatSemente(r.valor)}</TableCell>
+                                <TableCell className="tabular-nums">{formatFlorim(r.valor)}</TableCell>
                                 <TableCell>{r.unidade}</TableCell>
                                 <TableCell>
                                     <Badge variant={r.ativo ? 'default' : 'secondary'}>
@@ -191,7 +192,7 @@ function ReciclavelFormDialog({ open, onOpenChange, reciclavel, onSuccess }) {
                     <DialogTitle>{isEditing ? 'Editar reciclável' : 'Novo reciclável'}</DialogTitle>
                     <DialogDescription>
                         {isEditing
-                            ? 'Atualize os dados do reciclável e o valor em Sementes.'
+                            ? 'Atualize os dados do reciclável e o valor em Florins.'
                             : 'Cadastre um reciclável aceito nas doações.'}
                     </DialogDescription>
                 </DialogHeader>
@@ -220,16 +221,13 @@ function ReciclavelFormDialog({ open, onOpenChange, reciclavel, onSuccess }) {
                         <FieldError>{errors.descricao}</FieldError>
                     </Field>
                     <Field data-invalid={Boolean(errors.valor) || undefined}>
-                        <FieldLabel htmlFor="reciclavel-valor">Valor (Sementes)</FieldLabel>
-                        <Input
+                        <FieldLabel htmlFor="reciclavel-valor">Valor (Florins)</FieldLabel>
+                        <CampoNumero
                             id="reciclavel-valor"
                             name="valor"
-                            type="number"
-                            step="1"
-                            min="1"
-                            inputMode="numeric"
                             value={data.valor}
-                            onChange={(e) => setData('valor', e.target.value)}
+                            onChange={(v) => setData('valor', v)}
+                            min={1}
                             required
                             aria-invalid={Boolean(errors.valor)}
                         />

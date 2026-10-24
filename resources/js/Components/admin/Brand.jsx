@@ -1,5 +1,5 @@
 import { Link } from '@inertiajs/react';
-import { LeafIcon } from 'lucide-react';
+import { LogoAreaVerde } from '@/Components/marca/LogoAreaVerde';
 import {
     SidebarMenu,
     SidebarMenuButton,
@@ -10,14 +10,19 @@ export function Brand() {
     return (
         <SidebarMenu>
             <SidebarMenuItem>
-                <SidebarMenuButton size="lg" asChild>
-                    <Link href="/admin">
-                        <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                            <LeafIcon className="size-4" />
-                        </div>
-                        <div className="grid flex-1 text-left text-sm leading-tight">
-                            <span className="truncate font-medium">Área Verde</span>
-                            <span className="truncate text-xs">Operador</span>
+                <SidebarMenuButton size="lg" asChild className="hover:bg-transparent">
+                    <Link href="/admin" className="gap-0!">
+                        <LogoAreaVerde
+                            variant="dark"
+                            className="h-12 w-12 shrink-0 rounded-full"
+                        />
+                        <div className="grid flex-1 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden">
+                            <span className="truncate font-medium text-sidebar-foreground">
+                                Área Verde
+                            </span>
+                            <span className="truncate text-xs text-sidebar-foreground/70">
+                                Flor Atlântica
+                            </span>
                         </div>
                     </Link>
                 </SidebarMenuButton>

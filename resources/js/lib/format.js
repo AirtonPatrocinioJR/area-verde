@@ -1,24 +1,37 @@
-export function nomeSemente(valor) {
+export function nomeFlorim(valor) {
     const n = Math.abs(Number(valor ?? 0));
-    return n === 1 ? 'Semente' : 'Sementes';
+    return n === 1 ? 'Florim' : 'Florins';
 }
 
-export function formatSemente(valor) {
+/** @deprecated Use nomeFlorim */
+export function nomeSemente(valor) {
+    return nomeFlorim(valor);
+}
+
+export function formatFlorim(valor) {
     const n = Number(valor ?? 0);
-    const inteiro = Number.isInteger(n);
     return `${n.toLocaleString('pt-BR', {
-        minimumFractionDigits: inteiro ? 0 : 2,
+        minimumFractionDigits: 2,
         maximumFractionDigits: 2,
-    })} ${nomeSemente(n)}`;
+    })} ${nomeFlorim(n)}`;
 }
 
-export function formatValorSemente(valor) {
+/** @deprecated Use formatFlorim */
+export function formatSemente(valor) {
+    return formatFlorim(valor);
+}
+
+export function formatValorFlorim(valor) {
     const n = Number(valor ?? 0);
-    const inteiro = Number.isInteger(n);
     return n.toLocaleString('pt-BR', {
-        minimumFractionDigits: inteiro ? 0 : 2,
+        minimumFractionDigits: 2,
         maximumFractionDigits: 2,
     });
+}
+
+/** @deprecated Use formatValorFlorim */
+export function formatValorSemente(valor) {
+    return formatValorFlorim(valor);
 }
 
 export function formatTelefone(telefone) {
@@ -31,3 +44,5 @@ export function formatTelefone(telefone) {
     }
     return telefone;
 }
+
+export const ASSINATURA_FLORIM = 'Florim · A moeda digital do Flor Atlântica';
