@@ -30,13 +30,6 @@ class BrindeController extends Controller
         ]);
     }
 
-    public function create(): Response
-    {
-        return Inertia::render('Admin/Brindes/Form', [
-            'brinde' => null,
-        ]);
-    }
-
     public function store(Request $request): RedirectResponse
     {
         Brinde::create($this->validated($request));
@@ -44,20 +37,6 @@ class BrindeController extends Controller
         return redirect()
             ->route('admin.brindes.index')
             ->with('success', 'Brinde cadastrado.');
-    }
-
-    public function edit(Brinde $brinde): Response
-    {
-        return Inertia::render('Admin/Brindes/Form', [
-            'brinde' => [
-                'id' => $brinde->id,
-                'nome' => $brinde->nome,
-                'descricao' => $brinde->descricao,
-                'valor' => $brinde->valor,
-                'estoque' => $brinde->estoque,
-                'ativo' => $brinde->ativo,
-            ],
-        ]);
     }
 
     public function update(Request $request, Brinde $brinde): RedirectResponse
@@ -91,13 +70,14 @@ class BrindeController extends Controller
         return $request->validate([
             'nome' => ['required', 'string', 'max:120'],
             'descricao' => ['nullable', 'string', 'max:1000'],
-            'valor' => ['required', 'numeric', 'min:0.01'],
+            'valor' => ['required', 'integer', 'min:1'],
             'estoque' => ['required', 'integer', 'min:0'],
             'ativo' => ['sometimes', 'boolean'],
         ], [
             'nome.required' => 'Informe o nome.',
-            'valor.required' => 'Informe o valor em Semente.',
-            'valor.min' => 'O valor deve ser maior que zero.',
+            'valor.required' => 'Informe o valor em Sementes.',
+            'valor.integer' => 'O valor deve ser um número inteiro.',
+            'valor.min' => 'O valor deve ser pelo menos 1 Semente.',
             'estoque.required' => 'Informe a quantidade em estoque.',
         ]) + ['ativo' => $request->boolean('ativo', true)];
     }

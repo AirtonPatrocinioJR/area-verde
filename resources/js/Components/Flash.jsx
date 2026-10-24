@@ -1,4 +1,6 @@
 import { usePage } from '@inertiajs/react';
+import { Alert, AlertDescription, AlertTitle } from '@/Components/ui/alert';
+import { CheckCircle2Icon, CircleAlertIcon } from 'lucide-react';
 
 export default function Flash() {
     const { flash, errors } = usePage().props;
@@ -7,23 +9,31 @@ export default function Flash() {
     return (
         <div className="mb-4 space-y-2">
             {flash?.success && (
-                <div className="rounded-lg border border-leaf/30 bg-leaf/10 px-4 py-3 text-sm text-leaf-dark">
-                    {flash.success}
-                </div>
+                <Alert className="border-primary/30 bg-primary/10 text-primary">
+                    <CheckCircle2Icon />
+                    <AlertTitle>Sucesso</AlertTitle>
+                    <AlertDescription className="text-primary">{flash.success}</AlertDescription>
+                </Alert>
             )}
             {flash?.error && (
-                <div className="rounded-lg border border-danger/30 bg-danger/10 px-4 py-3 text-sm text-danger">
-                    {flash.error}
-                </div>
+                <Alert variant="destructive">
+                    <CircleAlertIcon />
+                    <AlertTitle>Erro</AlertTitle>
+                    <AlertDescription>{flash.error}</AlertDescription>
+                </Alert>
             )}
             {errorList.length > 0 && (
-                <div className="rounded-lg border border-danger/30 bg-danger/10 px-4 py-3 text-sm text-danger">
-                    <ul className="list-inside list-disc space-y-1">
-                        {errorList.map((msg, i) => (
-                            <li key={i}>{msg}</li>
-                        ))}
-                    </ul>
-                </div>
+                <Alert variant="destructive">
+                    <CircleAlertIcon />
+                    <AlertTitle>Verifique os campos</AlertTitle>
+                    <AlertDescription>
+                        <ul className="list-inside list-disc space-y-1">
+                            {errorList.map((msg, i) => (
+                                <li key={i}>{msg}</li>
+                            ))}
+                        </ul>
+                    </AlertDescription>
+                </Alert>
             )}
         </div>
     );

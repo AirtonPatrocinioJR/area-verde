@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Events\CarteiraAtualizada;
 use App\Models\Brinde;
 use App\Models\Cliente;
 use App\Models\Reciclavel;
@@ -28,7 +29,7 @@ class CarteiraService
             throw new InvalidArgumentException('Este reciclável está inativo.');
         }
 
-        return DB::transaction(function () use ($cliente, $reciclavel, $quantidade, $operador) {
+        $transacao = DB::transaction(function () use ($cliente, $reciclavel, $quantidade, $operador) {
             $cliente = Cliente::query()->whereKey($cliente->id)->lockForUpdate()->firstOrFail();
             $reciclavel = Reciclavel::query()->whereKey($reciclavel->id)->lockForUpdate()->firstOrFail();
 
@@ -57,6 +58,10 @@ class CarteiraService
                 ),
             ]);
         });
+
+        $this->notificarCarteira($transacao);
+
+        return $transacao;
     }
 
     public function debitar(
@@ -73,7 +78,7 @@ class CarteiraService
             throw new InvalidArgumentException('Este brinde está inativo.');
         }
 
-        return DB::transaction(function () use ($cliente, $brinde, $quantidade, $operador) {
+        $transacao = DB::transaction(function () use ($cliente, $brinde, $quantidade, $operador) {
             $cliente = Cliente::query()->whereKey($cliente->id)->lockForUpdate()->firstOrFail();
             $brinde = Brinde::query()->whereKey($brinde->id)->lockForUpdate()->firstOrFail();
 
@@ -86,7 +91,7 @@ class CarteiraService
             $saldoAtual = (float) $cliente->saldo;
 
             if ($saldoAtual < $valorTotal) {
-                throw new InvalidArgumentException('Saldo insuficiente em Semente.');
+                throw new InvalidArgumentException('Saldo insuficiente em Sementes.');
             }
 
             $novoSaldo = round($saldoAtual - $valorTotal, 2);
@@ -114,5 +119,14 @@ class CarteiraService
                 ),
             ]);
         });
+
+        $this->notificarCarteira($transacao);
+
+        return $transacao;
+    }
+
+    private function notificarCarteira(Transacao $transacao): void
+    {
+        CarteiraAtualizada::dispatch($transacao);
     }
 }

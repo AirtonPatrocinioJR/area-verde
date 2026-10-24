@@ -30,35 +30,13 @@ class ReciclavelController extends Controller
         ]);
     }
 
-    public function create(): Response
-    {
-        return Inertia::render('Admin/Reciclaveis/Form', [
-            'reciclavel' => null,
-        ]);
-    }
-
     public function store(Request $request): RedirectResponse
     {
-        $dados = $this->validated($request);
-        Reciclavel::create($dados);
+        Reciclavel::create($this->validated($request));
 
         return redirect()
             ->route('admin.reciclaveis.index')
             ->with('success', 'Reciclável cadastrado.');
-    }
-
-    public function edit(Reciclavel $reciclavel): Response
-    {
-        return Inertia::render('Admin/Reciclaveis/Form', [
-            'reciclavel' => [
-                'id' => $reciclavel->id,
-                'nome' => $reciclavel->nome,
-                'descricao' => $reciclavel->descricao,
-                'valor' => $reciclavel->valor,
-                'unidade' => $reciclavel->unidade,
-                'ativo' => $reciclavel->ativo,
-            ],
-        ]);
     }
 
     public function update(Request $request, Reciclavel $reciclavel): RedirectResponse
@@ -92,13 +70,14 @@ class ReciclavelController extends Controller
         return $request->validate([
             'nome' => ['required', 'string', 'max:120'],
             'descricao' => ['nullable', 'string', 'max:1000'],
-            'valor' => ['required', 'numeric', 'min:0.01'],
+            'valor' => ['required', 'integer', 'min:1'],
             'unidade' => ['required', 'string', 'max:20'],
             'ativo' => ['sometimes', 'boolean'],
         ], [
             'nome.required' => 'Informe o nome.',
-            'valor.required' => 'Informe o valor em Semente.',
-            'valor.min' => 'O valor deve ser maior que zero.',
+            'valor.required' => 'Informe o valor em Sementes.',
+            'valor.integer' => 'O valor deve ser um número inteiro.',
+            'valor.min' => 'O valor deve ser pelo menos 1 Semente.',
             'unidade.required' => 'Informe a unidade de medida.',
         ]) + ['ativo' => $request->boolean('ativo', true)];
     }

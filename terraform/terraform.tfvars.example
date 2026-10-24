@@ -1,0 +1,33 @@
+# Copy to terraform.tfvars (never commit secrets).
+# Generate APP_KEY: php artisan key:generate --show
+
+app_url  = "https://areaverde.example.com"
+app_key  = "base64:REPLACE_ME"
+app_name = "Área Verde"
+
+db_database = "areaverde"
+db_username = "areaverde"
+db_password = "REPLACE_ME_STRONG_PASSWORD"
+
+reverb_app_id     = "area-verde"
+reverb_app_key    = "REPLACE_ME_REVERB_KEY"
+reverb_app_secret = "REPLACE_ME_REVERB_SECRET"
+reverb_host       = "areaverde.example.com"
+reverb_port       = "443"
+reverb_scheme     = "https"
+
+http_port   = "80"
+deploy_path = "/opt/area-verde"
+
+# Optional: cloud-init clones the repo on first boot
+# git_repo = "https://github.com/org/area-verde.git"
+# git_ref  = "main"
+
+# Optional: deploy now over SSH to an existing VM
+# ssh_host             = "203.0.113.10"
+# ssh_user             = "ubuntu"
+# ssh_private_key_path = "~/.ssh/id_ed25519"
+# ssh_port             = 22
+
+# Security pin — do not lower below 8.4.27 without checking php.net advisories
+php_image_tag = "8.4.27"

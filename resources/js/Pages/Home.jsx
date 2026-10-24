@@ -1,4 +1,5 @@
 import { Head, Link } from '@inertiajs/react';
+import { Button } from '@/Components/ui/button';
 
 export default function Home() {
     return (
@@ -13,36 +14,30 @@ export default function Home() {
                     }}
                 />
                 <header className="relative z-10 mx-auto flex w-full max-w-4xl items-center justify-between px-4 py-6">
-                    <span className="font-display text-2xl font-semibold text-leaf-dark">Área Verde</span>
-                    <Link href="/admin/login" className="text-sm text-muted hover:text-leaf">
-                        Área do operador
-                    </Link>
+                    <span className="text-2xl font-semibold text-leaf-dark">Área Verde</span>
+                    <Button asChild variant="link" size="sm" className="text-muted-foreground">
+                        <Link href="/admin/login">Área do operador</Link>
+                    </Button>
                 </header>
                 <main className="relative z-10 mx-auto flex w-full max-w-4xl flex-1 flex-col justify-center px-4 pb-16 pt-8">
                     <p className="mb-3 text-sm font-medium uppercase tracking-[0.2em] text-moss">
                         Carteira em recicláveis
                     </p>
-                    <h1 className="font-display max-w-xl text-5xl font-semibold leading-tight text-ink sm:text-6xl">
+                    <h1 className="max-w-xl text-5xl font-semibold leading-tight text-foreground sm:text-6xl">
                         Transforme recicláveis em{' '}
-                        <span className="text-leaf">Semente</span>
+                        <span className="text-primary">Semente</span>
                     </h1>
-                    <p className="mt-5 max-w-lg text-lg text-muted">
-                        Doe materiais recicláveis, acumule Semente e resgate brindes. Sua carteira digital
+                    <p className="mt-5 max-w-lg text-lg text-muted-foreground">
+                        Doe materiais recicláveis, acumule Sementes e resgate brindes. Sua carteira digital
                         sustentável.
                     </p>
                     <div className="mt-10 flex flex-wrap gap-3">
-                        <Link
-                            href="/cadastro"
-                            className="inline-flex rounded-lg bg-leaf px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-leaf-dark"
-                        >
-                            Criar minha carteira
-                        </Link>
-                        <Link
-                            href="/entrar"
-                            className="inline-flex rounded-lg border border-line bg-white/80 px-6 py-3 text-sm font-semibold text-ink transition hover:border-leaf hover:text-leaf"
-                        >
-                            Entrar
-                        </Link>
+                        <Button asChild size="lg">
+                            <Link href="/cadastro">Criar minha carteira</Link>
+                        </Button>
+                        <Button asChild variant="outline" size="lg">
+                            <Link href="/entrar">Entrar</Link>
+                        </Button>
                     </div>
                 </main>
             </div>

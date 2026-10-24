@@ -2,12 +2,13 @@
 
 Carteira monetária em recicláveis. A moeda do sistema é a **Semente**.
 
-Clientes doam recicláveis, acumulam Semente e resgatam brindes. Operadores gerenciam cadastros e registram créditos e débitos.
+Clientes doam recicláveis, acumulam Sementes e resgatam brindes. Operadores gerenciam cadastros e registram créditos e débitos.
 
 ## Stack
 
 - Laravel 12
 - Inertia.js + React + Vite
+- Laravel Reverb (WebSockets) para atualizar a carteira em tempo real
 - Tailwind CSS 4
 - SQLite (padrão local)
 
@@ -64,31 +65,55 @@ php artisan serve
 
 Abra [http://localhost:8000](http://localhost:8000).
 
-Para desenvolvimento com hot reload, em outro terminal:
+Para desenvolvimento com hot reload (servidor + Vite + fila + Reverb):
 
 ```bash
+composer run dev
+```
+
+Isso sobe `php artisan serve`, a fila, o Vite e o **Reverb** (WebSocket na porta `8080`). A carteira do cliente atualiza sozinha quando o operador registra crédito ou débito.
+
+Ou, em terminais separados:
+
+```bash
+php artisan serve
 npm run dev
+php artisan reverb:start
+```
+
+> **Windows:** o script `dev` não usa o Laravel Pail (ele exige a extensão `pcntl`, indisponível no PHP do Windows).
+
+Confirme no `.env`:
+
+```env
+BROADCAST_CONNECTION=reverb
+REVERB_HOST=localhost
+REVERB_PORT=8080
+REVERB_SCHEME=http
 ```
 
 ## Credenciais (seed)
 
 | Papel    | Acesso                                      |
 |----------|---------------------------------------------|
+| Admin    | e-mail `admin@areaverde.local` / senha `senha123` |
 | Operador | e-mail `operador@areaverde.local` / senha `senha123` |
 | Cliente  | telefone `11987654321` (Maria Exemplo)      |
 
-- Login do operador: [http://localhost:8000/admin/login](http://localhost:8000/admin/login)
+- Login do painel (admin/operador): [http://localhost:8000/admin/login](http://localhost:8000/admin/login)
+- Gestão de usuários (somente admin): [http://localhost:8000/admin/usuarios](http://localhost:8000/admin/usuarios)
 - Cadastro público de cliente: [http://localhost:8000/cadastro](http://localhost:8000/cadastro)
 - Login do cliente: [http://localhost:8000/entrar](http://localhost:8000/entrar)
 
 ## Fluxo resumido
 
 1. Cliente cria carteira em `/cadastro` (nome + telefone).
-2. Operador cadastra recicláveis e brindes.
-3. Operador busca o cliente em **Admin → Clientes** e registra:
-   - **Crédito:** doação de reciclável → credita Semente
-   - **Débito:** resgate de brinde → debita Semente e baixa estoque
-4. Cliente vê saldo e extrato em `/carteira`.
+2. Admin gerencia usuários em **Admin → Usuários** (cria operadores/admins).
+3. Operador (ou admin) cadastra recicláveis e brindes.
+4. Operador busca o cliente em **Admin → Clientes** e registra:
+   - **Crédito:** doação de reciclável → credita Sementes
+   - **Débito:** resgate de brinde → debita Sementes e baixa estoque
+5. Cliente vê saldo e extrato em `/carteira` (atualização em tempo real via Reverb).
 
 ## Usar MySQL (opcional)
 

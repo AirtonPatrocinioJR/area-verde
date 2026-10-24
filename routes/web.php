@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\BrindeController;
 use App\Http\Controllers\Admin\ClienteController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ReciclavelController;
+use App\Http\Controllers\Admin\UsuarioController;
 use App\Http\Controllers\Cliente\AuthController as ClienteAuthController;
 use App\Http\Controllers\Cliente\CarteiraController;
 use App\Http\Controllers\HomeController;
@@ -34,12 +35,18 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/logout', [AdminAuthController::class, 'logout'])->name('logout');
         Route::get('/', DashboardController::class)->name('dashboard');
 
-        Route::resource('reciclaveis', ReciclavelController::class)->except(['show']);
-        Route::resource('brindes', BrindeController::class)->except(['show']);
+        Route::resource('reciclaveis', ReciclavelController::class)
+            ->except(['show', 'create', 'edit'])
+            ->parameters(['reciclaveis' => 'reciclavel']);
+        Route::resource('brindes', BrindeController::class)->except(['show', 'create', 'edit']);
 
         Route::get('/clientes', [ClienteController::class, 'index'])->name('clientes.index');
         Route::get('/clientes/{cliente}', [ClienteController::class, 'show'])->name('clientes.show');
         Route::post('/clientes/{cliente}/creditar', [ClienteController::class, 'creditar'])->name('clientes.creditar');
         Route::post('/clientes/{cliente}/debitar', [ClienteController::class, 'debitar'])->name('clientes.debitar');
+
+        Route::middleware('admin')->group(function () {
+            Route::resource('usuarios', UsuarioController::class)->except(['show', 'create', 'edit']);
+        });
     });
 });

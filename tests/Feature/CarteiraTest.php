@@ -2,11 +2,13 @@
 
 namespace Tests\Feature;
 
+use App\Events\CarteiraAtualizada;
 use App\Models\Brinde;
 use App\Models\Cliente;
 use App\Models\Reciclavel;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
 
 class CarteiraTest extends TestCase
@@ -34,10 +36,12 @@ class CarteiraTest extends TestCase
 
     public function test_credito_atualiza_saldo_corretamente(): void
     {
+        Event::fake([CarteiraAtualizada::class]);
+
         $reciclavel = Reciclavel::create([
             'nome' => 'PET',
             'descricao' => null,
-            'valor' => 0.50,
+            'valor' => 1,
             'unidade' => 'un',
             'ativo' => true,
         ]);
@@ -50,12 +54,13 @@ class CarteiraTest extends TestCase
 
         $response->assertRedirect();
         $this->cliente->refresh();
-        $this->assertEquals('5.00', $this->cliente->saldo);
+        $this->assertEquals('10.00', $this->cliente->saldo);
         $this->assertDatabaseHas('transacoes', [
             'cliente_id' => $this->cliente->id,
             'tipo' => 'credito',
-            'valor_total' => 5.00,
+            'valor_total' => 10.00,
         ]);
+        Event::assertDispatched(CarteiraAtualizada::class);
     }
 
     public function test_debito_bloqueado_por_saldo_insuficiente(): void
@@ -108,6 +113,8 @@ class CarteiraTest extends TestCase
 
     public function test_debito_baixa_estoque_e_saldo(): void
     {
+        Event::fake([CarteiraAtualizada::class]);
+
         $this->cliente->update(['saldo' => 50]);
 
         $brinde = Brinde::create([
@@ -129,5 +136,6 @@ class CarteiraTest extends TestCase
         $brinde->refresh();
         $this->assertEquals('20.00', $this->cliente->saldo);
         $this->assertEquals(8, $brinde->estoque);
+        Event::assertDispatched(CarteiraAtualizada::class);
     }
 }

@@ -23,7 +23,7 @@ class Brinde extends Model
     protected function casts(): array
     {
         return [
-            'valor' => 'decimal:2',
+            'valor' => 'integer',
             'estoque' => 'integer',
             'ativo' => 'boolean',
         ];

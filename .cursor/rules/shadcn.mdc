@@ -1,0 +1,31 @@
+---
+description: Usar componentes shadcn/ui no frontend React; sugerir alternativas quando não existirem
+globs: resources/js/**/*
+alwaysApply: true
+---
+
+# UI com shadcn
+
+## Obrigatório
+
+- Sempre usar componentes de `@/Components/ui` (shadcn).
+- Se o componente necessário ainda não estiver instalado, instalar com `npx shadcn@latest add <nome>`.
+- Não criar componentes visuais do zero (botões, inputs, dialogs, tabelas, badges, etc.).
+- Não introduzir outras libs de UI (MUI, Ant, Chakra, Headless UI avulso, etc.).
+- Preferir tokens do tema (`bg-primary`, `text-muted-foreground`, `border-border`, `text-destructive`, `text-soil`, `text-leaf-dark`…) em vez de cores hex ou classes legadas (`bg-leaf`, `text-ink`, `border-line`).
+
+## Quando o shadcn não tiver o componente
+
+1. **Pare** — não implemente UI customizada nem escolha outra lib sozinho.
+2. **Sugira** ao usuário 1–2 opções compatíveis (bloco do registry shadcn, componente baseado em Radix + Tailwind, ou pacote alinhado ao ecossistema).
+3. Explique prós/contras de forma curta.
+4. Só implemente após aprovação explícita do usuário.
+
+## Padrões do projeto
+
+- JSX (sem TypeScript): `tsx: false` em `components.json`.
+- Alias: `@/` → `resources/js/`.
+- Formulários Inertia: `Field` + `FieldLabel` + `Input`/`Textarea`/`Select` + `FieldError`.
+- Select do shadcn: `value` + `onValueChange` (não `onChange` nativo).
+- Links com estilo de botão: `Button asChild` + `Link` do Inertia.
+- Confirmações destrutivas: `AlertDialog` (nunca `window.confirm`).

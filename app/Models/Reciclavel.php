@@ -23,7 +23,7 @@ class Reciclavel extends Model
     protected function casts(): array
     {
         return [
-            'valor' => 'decimal:2',
+            'valor' => 'integer',
             'ativo' => 'boolean',
         ];
     }

@@ -1,12 +1,19 @@
-import { Head, useForm } from '@inertiajs/react';
+import { Head, Link, useForm } from '@inertiajs/react';
 import { useMemo } from 'react';
-import AdminLayout from '../../../Layouts/AdminLayout';
-import Extrato from '../../../Components/Extrato';
-import TextInput from '../../../Components/TextInput';
-import SelectInput from '../../../Components/SelectInput';
-import PrimaryButton from '../../../Components/PrimaryButton';
-import SecondaryButton from '../../../Components/SecondaryButton';
-import { formatSemente, formatTelefone } from '../../../lib/format';
+import AdminLayout from '@/Layouts/AdminLayout';
+import Extrato from '@/Components/Extrato';
+import { formatSemente, formatTelefone } from '@/lib/format';
+import { Button } from '@/Components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/Components/ui/card';
+import { Field, FieldError, FieldLabel } from '@/Components/ui/field';
+import { Input } from '@/Components/ui/input';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/Components/ui/select';
 
 export default function Show({ cliente, reciclaveis, brindes, transacoes }) {
     const credito = useForm({
@@ -59,98 +66,132 @@ export default function Show({ cliente, reciclaveis, brindes, transacoes }) {
         <AdminLayout title={cliente.nome}>
             <Head title={cliente.nome} />
             <div className="mb-6">
-                <SecondaryButton href="/admin/clientes">← Voltar</SecondaryButton>
+                <Button asChild variant="outline">
+                    <Link href="/admin/clientes">← Voltar</Link>
+                </Button>
             </div>
-            <div className="mb-8 rounded-2xl border border-line bg-white p-6 shadow-sm">
-                <p className="text-sm text-muted">{formatTelefone(cliente.telefone)}</p>
-                <p className="font-display mt-1 text-3xl font-semibold text-leaf">
-                    {formatSemente(cliente.saldo)}
-                </p>
-            </div>
+            <Card className="mb-8">
+                <CardHeader>
+                    <p className="text-sm text-muted-foreground">{formatTelefone(cliente.telefone)}</p>
+                    <CardTitle className="text-3xl text-primary">{formatSemente(cliente.saldo)}</CardTitle>
+                </CardHeader>
+            </Card>
             <div className="mb-8 grid gap-6 lg:grid-cols-2">
-                <form
-                    onSubmit={submitCredito}
-                    className="space-y-4 rounded-xl border border-line bg-white p-5 shadow-sm"
-                >
-                    <h2 className="font-display text-lg font-semibold text-leaf">Creditar (doação)</h2>
-                    <SelectInput
-                        label="Reciclável"
-                        name="reciclavel_id"
-                        value={credito.data.reciclavel_id}
-                        onChange={(e) => credito.setData('reciclavel_id', e.target.value)}
-                        error={credito.errors.reciclavel_id}
-                        required
-                    >
-                        <option value="">Selecione…</option>
-                        {reciclaveis.map((r) => (
-                            <option key={r.id} value={r.id}>
-                                {r.nome} — {formatSemente(r.valor)}/{r.unidade}
-                            </option>
-                        ))}
-                    </SelectInput>
-                    <TextInput
-                        label="Quantidade"
-                        name="quantidade"
-                        type="number"
-                        step="0.01"
-                        min="0.01"
-                        value={credito.data.quantidade}
-                        onChange={(e) => credito.setData('quantidade', e.target.value)}
-                        error={credito.errors.quantidade}
-                        required
-                    />
-                    {previaCredito && (
-                        <p className="text-sm text-muted">
-                            Prévia: <strong className="text-leaf">{formatSemente(previaCredito.total)}</strong>
-                            {previaCredito.unidade ? ` (${previaCredito.unidade})` : ''}
-                        </p>
-                    )}
-                    <PrimaryButton disabled={credito.processing}>Registrar crédito</PrimaryButton>
-                </form>
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="text-primary">Creditar (doação)</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <form onSubmit={submitCredito} className="space-y-4">
+                            <Field data-invalid={Boolean(credito.errors.reciclavel_id) || undefined}>
+                                <FieldLabel>Reciclável</FieldLabel>
+                                <Select
+                                    value={credito.data.reciclavel_id || undefined}
+                                    onValueChange={(value) => credito.setData('reciclavel_id', value)}
+                                    required
+                                >
+                                    <SelectTrigger className="w-full" aria-invalid={Boolean(credito.errors.reciclavel_id)}>
+                                        <SelectValue placeholder="Selecione…" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {reciclaveis.map((r) => (
+                                            <SelectItem key={r.id} value={String(r.id)}>
+                                                {r.nome} — {formatSemente(r.valor)}/{r.unidade}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                                <FieldError>{credito.errors.reciclavel_id}</FieldError>
+                            </Field>
+                            <Field data-invalid={Boolean(credito.errors.quantidade) || undefined}>
+                                <FieldLabel htmlFor="credito-quantidade">Quantidade</FieldLabel>
+                                <Input
+                                    id="credito-quantidade"
+                                    name="quantidade"
+                                    type="number"
+                                    step="0.01"
+                                    min="0.01"
+                                    value={credito.data.quantidade}
+                                    onChange={(e) => credito.setData('quantidade', e.target.value)}
+                                    required
+                                    aria-invalid={Boolean(credito.errors.quantidade)}
+                                />
+                                <FieldError>{credito.errors.quantidade}</FieldError>
+                            </Field>
+                            {previaCredito && (
+                                <p className="text-sm text-muted-foreground">
+                                    Prévia:{' '}
+                                    <strong className="text-primary">{formatSemente(previaCredito.total)}</strong>
+                                    {previaCredito.unidade ? ` (${previaCredito.unidade})` : ''}
+                                </p>
+                            )}
+                            <Button type="submit" disabled={credito.processing}>
+                                Registrar crédito
+                            </Button>
+                        </form>
+                    </CardContent>
+                </Card>
 
-                <form
-                    onSubmit={submitDebito}
-                    className="space-y-4 rounded-xl border border-line bg-white p-5 shadow-sm"
-                >
-                    <h2 className="font-display text-lg font-semibold text-soil">Debitar (resgate)</h2>
-                    <SelectInput
-                        label="Brinde"
-                        name="brinde_id"
-                        value={debito.data.brinde_id}
-                        onChange={(e) => debito.setData('brinde_id', e.target.value)}
-                        error={debito.errors.brinde_id}
-                        required
-                    >
-                        <option value="">Selecione…</option>
-                        {brindes.map((b) => (
-                            <option key={b.id} value={b.id}>
-                                {b.nome} — {formatSemente(b.valor)} (estoque: {b.estoque})
-                            </option>
-                        ))}
-                    </SelectInput>
-                    <TextInput
-                        label="Quantidade"
-                        name="quantidade"
-                        type="number"
-                        min="1"
-                        step="1"
-                        value={debito.data.quantidade}
-                        onChange={(e) => debito.setData('quantidade', e.target.value)}
-                        error={debito.errors.quantidade}
-                        required
-                    />
-                    {previaDebito && (
-                        <p className="text-sm text-muted">
-                            Prévia: <strong className="text-soil">{formatSemente(previaDebito.total)}</strong>
-                            {' · '}estoque: {previaDebito.estoque}
-                        </p>
-                    )}
-                    <PrimaryButton disabled={debito.processing} className="!bg-soil hover:!bg-soil/90">
-                        Registrar débito
-                    </PrimaryButton>
-                </form>
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="text-soil">Debitar (resgate)</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <form onSubmit={submitDebito} className="space-y-4">
+                            <Field data-invalid={Boolean(debito.errors.brinde_id) || undefined}>
+                                <FieldLabel>Brinde</FieldLabel>
+                                <Select
+                                    value={debito.data.brinde_id || undefined}
+                                    onValueChange={(value) => debito.setData('brinde_id', value)}
+                                    required
+                                >
+                                    <SelectTrigger className="w-full" aria-invalid={Boolean(debito.errors.brinde_id)}>
+                                        <SelectValue placeholder="Selecione…" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {brindes.map((b) => (
+                                            <SelectItem key={b.id} value={String(b.id)}>
+                                                {b.nome} — {formatSemente(b.valor)} (estoque: {b.estoque})
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                                <FieldError>{debito.errors.brinde_id}</FieldError>
+                            </Field>
+                            <Field data-invalid={Boolean(debito.errors.quantidade) || undefined}>
+                                <FieldLabel htmlFor="debito-quantidade">Quantidade</FieldLabel>
+                                <Input
+                                    id="debito-quantidade"
+                                    name="quantidade"
+                                    type="number"
+                                    min="1"
+                                    step="1"
+                                    value={debito.data.quantidade}
+                                    onChange={(e) => debito.setData('quantidade', e.target.value)}
+                                    required
+                                    aria-invalid={Boolean(debito.errors.quantidade)}
+                                />
+                                <FieldError>{debito.errors.quantidade}</FieldError>
+                            </Field>
+                            {previaDebito && (
+                                <p className="text-sm text-muted-foreground">
+                                    Prévia:{' '}
+                                    <strong className="text-soil">{formatSemente(previaDebito.total)}</strong>
+                                    {' · '}estoque: {previaDebito.estoque}
+                                </p>
+                            )}
+                            <Button
+                                type="submit"
+                                disabled={debito.processing}
+                                className="bg-soil text-white hover:bg-soil/90"
+                            >
+                                Registrar débito
+                            </Button>
+                        </form>
+                    </CardContent>
+                </Card>
             </div>
-            <h2 className="font-display mb-3 text-xl font-semibold">Extrato</h2>
+            <h2 className="mb-3 text-xl font-semibold">Extrato</h2>
             <Extrato transacoes={transacoes} />
         </AdminLayout>
     );

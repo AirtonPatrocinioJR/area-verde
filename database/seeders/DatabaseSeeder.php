@@ -14,20 +14,30 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+        User::query()->updateOrCreate(
+            ['email' => 'admin@areaverde.local'],
+            [
+                'name' => 'Admin Área Verde',
+                'password' => Hash::make('senha123'),
+                'papel' => User::PAPEL_ADMIN,
+            ],
+        );
+
         $operador = User::query()->updateOrCreate(
             ['email' => 'operador@areaverde.local'],
             [
                 'name' => 'Operador Área Verde',
                 'password' => Hash::make('senha123'),
+                'papel' => User::PAPEL_OPERADOR,
             ],
         );
 
         $reciclaveis = [
-            ['nome' => 'Garrafa PET', 'descricao' => 'Garrafa plástica PET limpa', 'valor' => 0.50, 'unidade' => 'un'],
-            ['nome' => 'Latinha de alumínio', 'descricao' => 'Lata de alumínio amassada', 'valor' => 0.30, 'unidade' => 'un'],
-            ['nome' => 'Papelão', 'descricao' => 'Papelão limpo e seco', 'valor' => 1.50, 'unidade' => 'kg'],
-            ['nome' => 'Vidro', 'descricao' => 'Garrafas e potes de vidro', 'valor' => 0.80, 'unidade' => 'kg'],
-            ['nome' => 'Óleo de cozinha', 'descricao' => 'Óleo usado acondicionado', 'valor' => 2.00, 'unidade' => 'L'],
+            ['nome' => 'Garrafa PET', 'descricao' => 'Garrafa plástica PET limpa', 'valor' => 1, 'unidade' => 'un'],
+            ['nome' => 'Latinha de alumínio', 'descricao' => 'Lata de alumínio amassada', 'valor' => 1, 'unidade' => 'un'],
+            ['nome' => 'Papelão', 'descricao' => 'Papelão limpo e seco', 'valor' => 2, 'unidade' => 'kg'],
+            ['nome' => 'Vidro', 'descricao' => 'Garrafas e potes de vidro', 'valor' => 1, 'unidade' => 'kg'],
+            ['nome' => 'Óleo de cozinha', 'descricao' => 'Óleo usado acondicionado', 'valor' => 2, 'unidade' => 'L'],
         ];
 
         foreach ($reciclaveis as $item) {
@@ -38,10 +48,10 @@ class DatabaseSeeder extends Seeder
         }
 
         $brindes = [
-            ['nome' => 'Ecobag', 'descricao' => 'Sacola reutilizável de tecido', 'valor' => 15.00, 'estoque' => 50],
-            ['nome' => 'Caneca', 'descricao' => 'Caneca ecológica 300ml', 'valor' => 25.00, 'estoque' => 30],
-            ['nome' => 'Muda de planta', 'descricao' => 'Muda nativa em tubete', 'valor' => 10.00, 'estoque' => 40],
-            ['nome' => 'Kit sementes', 'descricao' => 'Kit com 5 envelopes de sementes', 'valor' => 8.00, 'estoque' => 60],
+            ['nome' => 'Ecobag', 'descricao' => 'Sacola reutilizável de tecido', 'valor' => 15, 'estoque' => 50],
+            ['nome' => 'Caneca', 'descricao' => 'Caneca ecológica 300ml', 'valor' => 25, 'estoque' => 30],
+            ['nome' => 'Muda de planta', 'descricao' => 'Muda nativa em tubete', 'valor' => 10, 'estoque' => 40],
+            ['nome' => 'Kit sementes', 'descricao' => 'Kit com 5 envelopes de sementes', 'valor' => 8, 'estoque' => 60],
         ];
 
         foreach ($brindes as $item) {

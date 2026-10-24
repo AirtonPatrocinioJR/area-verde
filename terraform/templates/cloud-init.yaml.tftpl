@@ -1,0 +1,69 @@
+#cloud-config
+# Bootstrap Área Verde production VM.
+# PHP runtime is pinned to ${php_image_tag} (CVE-2026-109618, CVE-2026-109619).
+
+package_update: true
+package_upgrade: true
+
+packages:
+  - ca-certificates
+  - curl
+  - gnupg
+  - git
+
+write_files:
+  - path: ${deploy_path}/.env.production
+    permissions: "0600"
+    owner: root:root
+    encoding: b64
+    content: ${env_file_b64}
+
+  - path: /usr/local/bin/area-verde-bootstrap.sh
+    permissions: "0755"
+    owner: root:root
+    content: |
+      #!/bin/bash
+      set -euo pipefail
+      DEPLOY_PATH="${deploy_path}"
+      GIT_REPO="${git_repo}"
+      GIT_REF="${git_ref}"
+      PHP_TAG="${php_image_tag}"
+
+      install -d -m 0755 "$DEPLOY_PATH"
+      cd "$DEPLOY_PATH"
+
+      if ! command -v docker >/dev/null 2>&1; then
+        curl -fsSL https://get.docker.com | sh
+        systemctl enable --now docker
+      fi
+
+      if [ -n "$GIT_REPO" ]; then
+        if [ ! -d "$DEPLOY_PATH/.git" ]; then
+          git clone --branch "$GIT_REF" --depth 1 "$GIT_REPO" "$DEPLOY_PATH"
+        else
+          git fetch --depth 1 origin "$GIT_REF"
+          git checkout "$GIT_REF"
+          git reset --hard "origin/$GIT_REF"
+        fi
+        # Preserve generated env across git reset
+        if [ -f /root/area-verde.env.production ]; then
+          cp /root/area-verde.env.production "$DEPLOY_PATH/.env.production"
+        fi
+      fi
+
+      if [ ! -f "$DEPLOY_PATH/docker-compose.prod.yml" ]; then
+        echo "Waiting for application files in $DEPLOY_PATH (docker-compose.prod.yml missing)."
+        exit 0
+      fi
+
+      if ! grep -q "php:$${PHP_TAG}-fpm" "$DEPLOY_PATH/docker/php/Dockerfile"; then
+        echo "ERROR: Dockerfile must pin php:$${PHP_TAG}-fpm (security advisory 2026-10-21)." >&2
+        exit 1
+      fi
+
+      docker compose -f docker-compose.prod.yml --env-file .env.production build
+      docker compose -f docker-compose.prod.yml --env-file .env.production up -d
+
+runcmd:
+  - cp ${deploy_path}/.env.production /root/area-verde.env.production || true
+  - /usr/local/bin/area-verde-bootstrap.sh

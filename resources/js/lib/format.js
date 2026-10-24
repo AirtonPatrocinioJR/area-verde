@@ -1,9 +1,24 @@
+export function nomeSemente(valor) {
+    const n = Math.abs(Number(valor ?? 0));
+    return n === 1 ? 'Semente' : 'Sementes';
+}
+
 export function formatSemente(valor) {
     const n = Number(valor ?? 0);
+    const inteiro = Number.isInteger(n);
     return `${n.toLocaleString('pt-BR', {
-        minimumFractionDigits: 2,
+        minimumFractionDigits: inteiro ? 0 : 2,
         maximumFractionDigits: 2,
-    })} Semente`;
+    })} ${nomeSemente(n)}`;
+}
+
+export function formatValorSemente(valor) {
+    const n = Number(valor ?? 0);
+    const inteiro = Number.isInteger(n);
+    return n.toLocaleString('pt-BR', {
+        minimumFractionDigits: inteiro ? 0 : 2,
+        maximumFractionDigits: 2,
+    });
 }
 
 export function formatTelefone(telefone) {

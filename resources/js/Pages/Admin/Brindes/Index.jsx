@@ -1,74 +1,274 @@
-import { Head, Link, router } from '@inertiajs/react';
-import AdminLayout from '../../../Layouts/AdminLayout';
-import SecondaryButton from '../../../Components/SecondaryButton';
-import { formatSemente } from '../../../lib/format';
+import { Head, router, useForm } from '@inertiajs/react';
+import { useState } from 'react';
+import AdminLayout from '@/Layouts/AdminLayout';
+import { formatSemente } from '@/lib/format';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from '@/Components/ui/alert-dialog';
+import { Badge } from '@/Components/ui/badge';
+import { Button } from '@/Components/ui/button';
+import { Card } from '@/Components/ui/card';
+import { Checkbox } from '@/Components/ui/checkbox';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from '@/Components/ui/dialog';
+import { Field, FieldError, FieldLabel } from '@/Components/ui/field';
+import { Input } from '@/Components/ui/input';
+import { Label } from '@/Components/ui/label';
+import { Textarea } from '@/Components/ui/textarea';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/Components/ui/table';
 
 export default function Index({ brindes }) {
-    function destroy(id) {
-        if (confirm('Excluir ou desativar este brinde?')) {
-            router.delete(`/admin/brindes/${id}`);
-        }
+    const [pendingId, setPendingId] = useState(null);
+    const [formOpen, setFormOpen] = useState(false);
+    const [editing, setEditing] = useState(null);
+
+    function openCreate() {
+        setEditing(null);
+        setFormOpen(true);
+    }
+
+    function openEdit(brinde) {
+        setEditing(brinde);
+        setFormOpen(true);
+    }
+
+    function closeForm() {
+        setFormOpen(false);
+        setEditing(null);
+    }
+
+    function confirmDestroy() {
+        if (pendingId == null) return;
+        router.delete(`/admin/brindes/${pendingId}`);
+        setPendingId(null);
     }
 
     return (
         <AdminLayout title="Brindes">
             <Head title="Brindes" />
             <div className="mb-6 flex justify-end">
-                <SecondaryButton href="/admin/brindes/create">Novo brinde</SecondaryButton>
+                <Button type="button" variant="outline" onClick={openCreate}>
+                    Novo brinde
+                </Button>
             </div>
-            <div className="overflow-x-auto rounded-xl border border-line bg-white">
-                <table className="w-full text-left text-sm">
-                    <thead className="border-b border-line bg-cream/50 text-muted">
-                        <tr>
-                            <th className="px-4 py-3 font-medium">Nome</th>
-                            <th className="px-4 py-3 font-medium">Valor</th>
-                            <th className="px-4 py-3 font-medium">Estoque</th>
-                            <th className="px-4 py-3 font-medium">Status</th>
-                            <th className="px-4 py-3 font-medium"></th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-line">
+            <Card className="gap-0 overflow-hidden py-0">
+                <Table>
+                    <TableHeader>
+                        <TableRow className="bg-secondary/50 hover:bg-secondary/50">
+                            <TableHead>Nome</TableHead>
+                            <TableHead>Valor</TableHead>
+                            <TableHead>Estoque</TableHead>
+                            <TableHead>Status</TableHead>
+                            <TableHead className="text-right"></TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
                         {brindes.map((b) => (
-                            <tr key={b.id}>
-                                <td className="px-4 py-3">
+                            <TableRow key={b.id}>
+                                <TableCell>
                                     <p className="font-medium">{b.nome}</p>
                                     {b.descricao && (
-                                        <p className="text-xs text-muted line-clamp-1">{b.descricao}</p>
+                                        <p className="line-clamp-1 text-xs text-muted-foreground">{b.descricao}</p>
                                     )}
-                                </td>
-                                <td className="px-4 py-3 tabular-nums">{formatSemente(b.valor)}</td>
-                                <td className="px-4 py-3 tabular-nums">{b.estoque}</td>
-                                <td className="px-4 py-3">
-                                    <span
-                                        className={`rounded-full px-2 py-0.5 text-xs ${
-                                            b.ativo
-                                                ? 'bg-leaf/15 text-leaf-dark'
-                                                : 'bg-muted/15 text-muted'
-                                        }`}
-                                    >
+                                </TableCell>
+                                <TableCell className="tabular-nums">{formatSemente(b.valor)}</TableCell>
+                                <TableCell className="tabular-nums">{b.estoque}</TableCell>
+                                <TableCell>
+                                    <Badge variant={b.ativo ? 'default' : 'secondary'}>
                                         {b.ativo ? 'Ativo' : 'Inativo'}
-                                    </span>
-                                </td>
-                                <td className="space-x-3 px-4 py-3 text-right">
-                                    <Link
-                                        href={`/admin/brindes/${b.id}/edit`}
-                                        className="text-leaf hover:underline"
+                                    </Badge>
+                                </TableCell>
+                                <TableCell className="space-x-2 text-right">
+                                    <Button
+                                        type="button"
+                                        variant="link"
+                                        size="sm"
+                                        className="h-auto px-0"
+                                        onClick={() => openEdit(b)}
                                     >
                                         Editar
-                                    </Link>
-                                    <button
+                                    </Button>
+                                    <Button
                                         type="button"
-                                        onClick={() => destroy(b.id)}
-                                        className="text-danger hover:underline"
+                                        variant="link"
+                                        size="sm"
+                                        className="h-auto px-0 text-destructive"
+                                        onClick={() => setPendingId(b.id)}
                                     >
                                         Excluir
-                                    </button>
-                                </td>
-                            </tr>
+                                    </Button>
+                                </TableCell>
+                            </TableRow>
                         ))}
-                    </tbody>
-                </table>
-            </div>
+                    </TableBody>
+                </Table>
+            </Card>
+
+            <BrindeFormDialog
+                key={editing?.id ?? 'create'}
+                open={formOpen}
+                onOpenChange={(open) => {
+                    if (!open) closeForm();
+                    else setFormOpen(true);
+                }}
+                brinde={editing}
+                onSuccess={closeForm}
+            />
+
+            <AlertDialog open={pendingId != null} onOpenChange={(open) => !open && setPendingId(null)}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Excluir brinde?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            Excluir ou desativar este brinde? Esta ação não pode ser desfeita facilmente.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                        <AlertDialogAction variant="destructive" onClick={confirmDestroy}>
+                            Excluir
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </AdminLayout>
+    );
+}
+
+function BrindeFormDialog({ open, onOpenChange, brinde, onSuccess }) {
+    const isEditing = Boolean(brinde);
+    const { data, setData, post, put, processing, errors, reset, clearErrors } = useForm({
+        nome: brinde?.nome ?? '',
+        descricao: brinde?.descricao ?? '',
+        valor: brinde?.valor ?? '',
+        estoque: brinde?.estoque ?? 0,
+        ativo: brinde?.ativo ?? true,
+    });
+
+    function submit(e) {
+        e.preventDefault();
+
+        const options = {
+            preserveScroll: true,
+            onSuccess: () => {
+                reset();
+                clearErrors();
+                onSuccess();
+            },
+        };
+
+        if (isEditing) {
+            put(`/admin/brindes/${brinde.id}`, options);
+        } else {
+            post('/admin/brindes', options);
+        }
+    }
+
+    return (
+        <Dialog open={open} onOpenChange={onOpenChange}>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>{isEditing ? 'Editar brinde' : 'Novo brinde'}</DialogTitle>
+                    <DialogDescription>
+                        {isEditing
+                            ? 'Atualize os dados do brinde e o estoque disponível.'
+                            : 'Cadastre um brinde resgatável com Sementes.'}
+                    </DialogDescription>
+                </DialogHeader>
+                <form onSubmit={submit} className="space-y-4">
+                    <Field data-invalid={Boolean(errors.nome) || undefined}>
+                        <FieldLabel htmlFor="brinde-nome">Nome</FieldLabel>
+                        <Input
+                            id="brinde-nome"
+                            name="nome"
+                            value={data.nome}
+                            onChange={(e) => setData('nome', e.target.value)}
+                            required
+                            aria-invalid={Boolean(errors.nome)}
+                        />
+                        <FieldError>{errors.nome}</FieldError>
+                    </Field>
+                    <Field data-invalid={Boolean(errors.descricao) || undefined}>
+                        <FieldLabel htmlFor="brinde-descricao">Descrição</FieldLabel>
+                        <Textarea
+                            id="brinde-descricao"
+                            name="descricao"
+                            value={data.descricao}
+                            onChange={(e) => setData('descricao', e.target.value)}
+                            aria-invalid={Boolean(errors.descricao)}
+                        />
+                        <FieldError>{errors.descricao}</FieldError>
+                    </Field>
+                    <Field data-invalid={Boolean(errors.valor) || undefined}>
+                        <FieldLabel htmlFor="brinde-valor">Valor (Sementes)</FieldLabel>
+                        <Input
+                            id="brinde-valor"
+                            name="valor"
+                            type="number"
+                            step="1"
+                            min="1"
+                            inputMode="numeric"
+                            value={data.valor}
+                            onChange={(e) => setData('valor', e.target.value)}
+                            required
+                            aria-invalid={Boolean(errors.valor)}
+                        />
+                        <FieldError>{errors.valor}</FieldError>
+                    </Field>
+                    <Field data-invalid={Boolean(errors.estoque) || undefined}>
+                        <FieldLabel htmlFor="brinde-estoque">Estoque</FieldLabel>
+                        <Input
+                            id="brinde-estoque"
+                            name="estoque"
+                            type="number"
+                            min="0"
+                            value={data.estoque}
+                            onChange={(e) => setData('estoque', e.target.value)}
+                            required
+                            aria-invalid={Boolean(errors.estoque)}
+                        />
+                        <FieldError>{errors.estoque}</FieldError>
+                    </Field>
+                    <div className="flex items-center gap-2">
+                        <Checkbox
+                            id="brinde-ativo"
+                            checked={data.ativo}
+                            onCheckedChange={(checked) => setData('ativo', checked === true)}
+                        />
+                        <Label htmlFor="brinde-ativo" className="font-normal">
+                            Ativo
+                        </Label>
+                    </div>
+                    <DialogFooter>
+                        <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+                            Cancelar
+                        </Button>
+                        <Button type="submit" disabled={processing}>
+                            {processing ? 'Salvando…' : 'Salvar'}
+                        </Button>
+                    </DialogFooter>
+                </form>
+            </DialogContent>
+        </Dialog>
     );
 }
