@@ -9,13 +9,6 @@ db_database = "areaverde"
 db_username = "areaverde"
 db_password = "REPLACE_ME_STRONG_PASSWORD"
 
-reverb_app_id     = "area-verde"
-reverb_app_key    = "REPLACE_ME_REVERB_KEY"
-reverb_app_secret = "REPLACE_ME_REVERB_SECRET"
-reverb_host       = "areaverde.example.com"
-reverb_port       = "443"
-reverb_scheme     = "https"
-
 http_port   = "80"
 deploy_path = "/opt/area-verde"
 

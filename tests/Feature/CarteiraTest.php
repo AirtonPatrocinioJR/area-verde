@@ -2,13 +2,11 @@
 
 namespace Tests\Feature;
 
-use App\Events\CarteiraAtualizada;
 use App\Models\Brinde;
 use App\Models\Cliente;
 use App\Models\Reciclavel;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
 
 class CarteiraTest extends TestCase
@@ -39,8 +37,6 @@ class CarteiraTest extends TestCase
 
     public function test_credito_atualiza_saldo_corretamente(): void
     {
-        Event::fake([CarteiraAtualizada::class]);
-
         $reciclavel = Reciclavel::create([
             'nome' => 'PET',
             'descricao' => null,
@@ -68,13 +64,10 @@ class CarteiraTest extends TestCase
             'tipo' => 'credito',
             'valor_total' => 10.00,
         ]);
-        Event::assertDispatched(CarteiraAtualizada::class);
     }
 
     public function test_recebimento_multiplos_itens(): void
     {
-        Event::fake([CarteiraAtualizada::class]);
-
         $pet = Reciclavel::create([
             'nome' => 'PET',
             'descricao' => null,
@@ -165,8 +158,6 @@ class CarteiraTest extends TestCase
 
     public function test_debito_baixa_estoque_e_saldo(): void
     {
-        Event::fake([CarteiraAtualizada::class]);
-
         $this->cliente->update(['saldo' => 50]);
 
         $brinde = Brinde::create([
@@ -199,6 +190,5 @@ class CarteiraTest extends TestCase
             'quantidade' => -2,
             'estoque_apos' => 8,
         ]);
-        Event::assertDispatched(CarteiraAtualizada::class);
     }
 }

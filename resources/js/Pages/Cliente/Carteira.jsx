@@ -1,40 +1,15 @@
-import { Head, Link, router } from '@inertiajs/react';
-import { useEffect, useState } from 'react';
+import { Head, Link } from '@inertiajs/react';
 import { ArrowDownLeftIcon, ArrowUpRightIcon } from 'lucide-react';
 import ClienteLayout from '@/Layouts/ClienteLayout';
 import Extrato from '@/Components/Extrato';
 import { MedalhaoFlorim } from '@/Components/marca/LogoAreaVerde';
-import { Badge } from '@/Components/ui/badge';
 import { Button } from '@/Components/ui/button';
 import { Card, CardContent } from '@/Components/ui/card';
 import { formatFlorim, formatValorFlorim, nomeFlorim } from '@/lib/format';
 import { cn } from '@/lib/utils';
 
 export default function Carteira({ cliente, totais, filtro = 'tudo', transacoes }) {
-    const [aoVivo, setAoVivo] = useState(false);
     const primeiroNome = (cliente.nome || '').split(/\s+/)[0] || 'visitante';
-
-    useEffect(() => {
-        if (!cliente?.id || !window.Echo) {
-            return undefined;
-        }
-
-        const canal = `cliente.${cliente.id}`;
-
-        window.Echo.private(canal).listen('.carteira.atualizada', () => {
-            router.reload({
-                only: ['cliente', 'transacoes', 'totais'],
-                preserveScroll: true,
-            });
-        });
-
-        setAoVivo(true);
-
-        return () => {
-            window.Echo.leave(canal);
-            setAoVivo(false);
-        };
-    }, [cliente.id]);
 
     return (
         <ClienteLayout>
@@ -42,15 +17,7 @@ export default function Carteira({ cliente, totais, filtro = 'tudo', transacoes 
             <p className="text-muted-foreground">
                 Olá, <span className="font-medium text-foreground">{primeiroNome}</span>
             </p>
-            <div className="mb-2 flex items-center justify-between gap-2">
-                <h1 className="text-3xl font-semibold text-leaf-dark">Minha carteira</h1>
-                {aoVivo && (
-                    <Badge variant="secondary" className="bg-primary/10 text-primary">
-                        <span className="size-1.5 animate-pulse rounded-full bg-primary" />
-                        Ao vivo
-                    </Badge>
-                )}
-            </div>
+            <h1 className="mb-2 text-3xl font-semibold text-leaf-dark">Minha carteira</h1>
 
             <div className="mb-4 overflow-hidden rounded-2xl bg-leaf-dark p-5 text-primary-foreground shadow-md">
                 <div className="flex items-center gap-4">

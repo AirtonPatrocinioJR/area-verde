@@ -30,36 +30,6 @@ variable "db_password" {
   sensitive   = true
 }
 
-variable "reverb_app_id" {
-  type        = string
-  default     = "area-verde"
-}
-
-variable "reverb_app_key" {
-  type        = string
-  sensitive   = true
-}
-
-variable "reverb_app_secret" {
-  type        = string
-  sensitive   = true
-}
-
-variable "reverb_host" {
-  type        = string
-  description = "Public hostname clients use for WebSocket (usually same host as APP_URL)"
-}
-
-variable "reverb_port" {
-  type        = string
-  default     = "443"
-}
-
-variable "reverb_scheme" {
-  type        = string
-  default     = "https"
-}
-
 variable "http_port" {
   type        = string
   default     = "80"

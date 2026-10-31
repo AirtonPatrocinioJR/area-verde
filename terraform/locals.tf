@@ -13,16 +13,10 @@ locals {
     DB_USERNAME=${var.db_username}
     DB_PASSWORD=${var.db_password}
     SESSION_DRIVER=database
-    BROADCAST_CONNECTION=reverb
+    BROADCAST_CONNECTION=log
     QUEUE_CONNECTION=database
     CACHE_STORE=database
     FILESYSTEM_DISK=local
-    REVERB_APP_ID=${var.reverb_app_id}
-    REVERB_APP_KEY=${var.reverb_app_key}
-    REVERB_APP_SECRET=${var.reverb_app_secret}
-    REVERB_HOST=${var.reverb_host}
-    REVERB_PORT=${var.reverb_port}
-    REVERB_SCHEME=${var.reverb_scheme}
     HTTP_PORT=${var.http_port}
   EOT
 

@@ -1,5 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
 import { AssinaturaFlorim } from '@/Components/marca/AssinaturaFlorim';
+import { BarraLogos } from '@/Components/marca/BarraLogos';
 import { LogoAreaVerde } from '@/Components/marca/LogoAreaVerde';
 import { Button } from '@/Components/ui/button';
 
@@ -7,7 +8,7 @@ export default function Home() {
     return (
         <>
             <Head title="Início" />
-            <div className="relative flex min-h-screen flex-col overflow-hidden">
+            <div className="relative flex min-h-screen flex-col">
                 <div
                     className="pointer-events-none absolute -left-8 -top-8 size-48 opacity-25"
                     aria-hidden
@@ -42,6 +43,7 @@ export default function Home() {
                     </div>
                     <AssinaturaFlorim className="mt-16 items-start" />
                 </main>
+                <BarraLogos />
             </div>
         </>
     );

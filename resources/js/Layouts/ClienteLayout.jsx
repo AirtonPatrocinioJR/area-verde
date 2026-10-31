@@ -1,6 +1,7 @@
 import { Link, usePage } from '@inertiajs/react';
 import { LogOutIcon, UserIcon, WalletIcon } from 'lucide-react';
 import Flash from '@/Components/Flash';
+import { BarraLogos } from '@/Components/marca/BarraLogos';
 import { LogoAreaVerde } from '@/Components/marca/LogoAreaVerde';
 import { Button } from '@/Components/ui/button';
 import { cn } from '@/lib/utils';
@@ -8,6 +9,7 @@ import { cn } from '@/lib/utils';
 export default function ClienteLayout({ children, title, showNav = true }) {
     const { auth, url } = usePage().props;
     const path = typeof window !== 'undefined' ? window.location.pathname : (url || '');
+    const navVisivel = showNav && auth.cliente;
 
     return (
         <div className="mx-auto flex min-h-screen max-w-lg flex-col bg-background">
@@ -24,14 +26,15 @@ export default function ClienteLayout({ children, title, showNav = true }) {
                     </Button>
                 )}
             </header>
-            <main className={cn('flex-1 px-4 pb-24', showNav ? 'pb-24' : 'pb-8')}>
+            <main className="flex-1 px-4 pb-8">
                 {title && (
                     <h1 className="mb-4 text-3xl font-semibold text-leaf-dark">{title}</h1>
                 )}
                 <Flash />
                 {children}
             </main>
-            {showNav && auth.cliente && (
+            <BarraLogos className={cn(navVisivel && 'mb-24')} />
+            {navVisivel && (
                 <nav className="fixed inset-x-0 bottom-0 z-20 border-t border-border bg-card/95 backdrop-blur-sm">
                     <div className="mx-auto flex max-w-lg">
                         <NavItem

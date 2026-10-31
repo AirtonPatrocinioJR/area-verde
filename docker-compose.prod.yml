@@ -44,23 +44,11 @@ services:
       DB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
       SESSION_DRIVER: database
       SESSION_LIFETIME: "120"
-      BROADCAST_CONNECTION: reverb
+      BROADCAST_CONNECTION: log
       QUEUE_CONNECTION: database
       CACHE_STORE: database
       FILESYSTEM_DISK: local
-      REVERB_APP_ID: ${REVERB_APP_ID:?REVERB_APP_ID is required}
-      REVERB_APP_KEY: ${REVERB_APP_KEY:?REVERB_APP_KEY is required}
-      REVERB_APP_SECRET: ${REVERB_APP_SECRET:?REVERB_APP_SECRET is required}
-      REVERB_HOST: ${REVERB_HOST:-localhost}
-      REVERB_PORT: ${REVERB_PORT:-443}
-      REVERB_SCHEME: ${REVERB_SCHEME:-https}
-      REVERB_SERVER_HOST: 0.0.0.0
-      REVERB_SERVER_PORT: "8080"
       VITE_APP_NAME: ${APP_NAME:-Área Verde}
-      VITE_REVERB_APP_KEY: ${REVERB_APP_KEY}
-      VITE_REVERB_HOST: ${REVERB_HOST:-localhost}
-      VITE_REVERB_PORT: ${REVERB_PORT:-443}
-      VITE_REVERB_SCHEME: ${REVERB_SCHEME:-https}
       CONTAINER_ROLE: app
     volumes:
       - storage_data:/var/www/html/storage/app
@@ -87,20 +75,6 @@ services:
     networks:
       - app
 
-  reverb:
-    image: area-verde-app:8.4.27
-    restart: unless-stopped
-    environment:
-      <<: *app_env
-      CONTAINER_ROLE: reverb
-    depends_on:
-      app:
-        condition: service_started
-      postgres:
-        condition: service_healthy
-    networks:
-      - app
-
   nginx:
     image: nginx:1.27-alpine
     restart: unless-stopped
@@ -111,7 +85,6 @@ services:
       - public_html:/var/www/html/public:ro
     depends_on:
       - app
-      - reverb
     networks:
       - app
 

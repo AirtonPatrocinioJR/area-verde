@@ -50,6 +50,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
             ->parameters(['produtos' => 'produto']);
 
         Route::get('/clientes', [ClienteController::class, 'index'])->name('clientes.index');
+        Route::post('/clientes', [ClienteController::class, 'store'])->name('clientes.store');
         Route::get('/clientes/{cliente}', [ClienteController::class, 'show'])->name('clientes.show');
 
         Route::get('/receber', [OperacaoController::class, 'receber'])->name('receber');

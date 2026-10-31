@@ -3,6 +3,7 @@ import { Fragment } from 'react';
 import Flash from '@/Components/Flash';
 import { AppSidebar } from '@/Components/admin/AppSidebar';
 import { HeaderUser } from '@/Components/admin/HeaderUser';
+import { BarraLogos } from '@/Components/marca/BarraLogos';
 import {
     Breadcrumb,
     BreadcrumbItem,
@@ -93,6 +94,7 @@ export default function AdminLayout({
                         <Flash />
                         {children}
                     </div>
+                    <BarraLogos />
                 </SidebarInset>
             </SidebarProvider>
         </TooltipProvider>

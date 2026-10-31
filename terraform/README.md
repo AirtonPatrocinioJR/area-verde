@@ -34,8 +34,7 @@ Com `ssh_host` + `ssh_private_key_path`, o apply também empacota o código, env
 |----------|-----------------------------------------|
 | app      | `php:8.4.27-fpm-bookworm` (Laravel)     |
 | queue    | mesmo image, `artisan queue:work`       |
-| reverb   | mesmo image, `artisan reverb:start`     |
-| nginx    | proxy HTTP + WebSocket `/app` → Reverb  |
+| nginx    | proxy HTTP                              |
 | postgres | Postgres 16                             |
 
 ## Segurança PHP

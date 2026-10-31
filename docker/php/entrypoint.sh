@@ -30,9 +30,5 @@ if [ "$role" = "queue" ]; then
   exec php artisan queue:work --sleep=3 --tries=1 --timeout=0 --no-interaction
 fi
 
-if [ "$role" = "reverb" ]; then
-  exec php artisan reverb:start --host=0.0.0.0 --port=8080
-fi
-
 echo "Unknown CONTAINER_ROLE: $role" >&2
 exit 1

@@ -76,7 +76,6 @@ return [
         'queue:listen',
         'schedule:work',
         'schedule:run',
-        'reverb:start',
         'pail',
         'down',
         'key:generate',

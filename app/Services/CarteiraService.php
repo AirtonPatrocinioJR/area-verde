@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Events\CarteiraAtualizada;
 use App\Models\Brinde;
 use App\Models\Cliente;
 use App\Models\MovimentoEstoque;
@@ -89,8 +88,6 @@ class CarteiraService
 
             return $criadas;
         });
-
-        $transacoes->each(fn (Transacao $t) => $this->notificarCarteira($t));
 
         return $transacoes;
     }
@@ -208,8 +205,6 @@ class CarteiraService
             return $criadas;
         });
 
-        $transacoes->each(fn (Transacao $t) => $this->notificarCarteira($t));
-
         return $transacoes;
     }
 
@@ -268,8 +263,4 @@ class CarteiraService
         });
     }
 
-    private function notificarCarteira(Transacao $transacao): void
-    {
-        CarteiraAtualizada::dispatch($transacao);
-    }
 }

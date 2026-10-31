@@ -1,0 +1,10 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Bloqueia acesso direto a arquivos sensíveis na raiz do projeto
+    RewriteRule ^(\.env|composer\.(json|lock)|artisan|phpunit\.xml) - [F,L]
+    RewriteRule ^(app|bootstrap|config|database|resources|routes|storage|tests|vendor)/ - [F,L]
+
+    # Redireciona tudo para public/ quando o document root aponta para a pasta do projeto
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>

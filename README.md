@@ -8,7 +8,6 @@ Clientes doam recicláveis, acumulam Sementes e resgatam brindes. Operadores ger
 
 - Laravel 12
 - Inertia.js + React + Vite
-- Laravel Reverb (WebSockets) para atualizar a carteira em tempo real
 - Tailwind CSS 4
 - SQLite (padrão local)
 
@@ -65,32 +64,23 @@ php artisan serve
 
 Abra [http://localhost:8000](http://localhost:8000).
 
-Para desenvolvimento com hot reload (servidor + Vite + fila + Reverb):
+Para desenvolvimento com hot reload (servidor + Vite + fila):
 
 ```bash
 composer run dev
 ```
 
-Isso sobe `php artisan serve`, a fila, o Vite e o **Reverb** (WebSocket na porta `8080`). A carteira do cliente atualiza sozinha quando o operador registra crédito ou débito.
+Isso sobe `php artisan serve`, a fila e o Vite. Saldo e extrato da carteira atualizam no próximo carregamento da página.
 
 Ou, em terminais separados:
 
 ```bash
 php artisan serve
 npm run dev
-php artisan reverb:start
+php artisan queue:listen --tries=1 --timeout=0
 ```
 
 > **Windows:** o script `dev` não usa o Laravel Pail (ele exige a extensão `pcntl`, indisponível no PHP do Windows).
-
-Confirme no `.env`:
-
-```env
-BROADCAST_CONNECTION=reverb
-REVERB_HOST=localhost
-REVERB_PORT=8080
-REVERB_SCHEME=http
-```
 
 ## Credenciais (seed)
 
@@ -113,7 +103,7 @@ REVERB_SCHEME=http
 4. Operador busca o cliente em **Admin → Clientes** e registra:
    - **Crédito:** doação de reciclável → credita Sementes
    - **Débito:** resgate de brinde → debita Sementes e baixa estoque
-5. Cliente vê saldo e extrato em `/carteira` (atualização em tempo real via Reverb).
+5. Cliente vê saldo e extrato em `/carteira`.
 
 ## Usar MySQL (opcional)
 
@@ -139,6 +129,50 @@ php artisan migrate --seed
 ```bash
 php artisan test
 ```
+
+## Hospedagem no cPanel (HostGator)
+
+O plano compartilhado usa PHP + MySQL + Apache. Não use o `docker-compose.prod.yml` nesse ambiente.
+
+### 1. Preparar o pacote (na sua máquina)
+
+No Git Bash, na raiz do projeto:
+
+```bash
+bash scripts/empacotar-cpanel.sh
+```
+
+O script gera `dist/area-verde-cpanel-*.zip` com `vendor/` e `public/build/`, sem `node_modules`, `.git`, testes, SQLite nem `.env`.
+
+### 2. No cPanel
+
+1. **PHP:** MultiPHP Manager / Select PHP Version → **8.2** ou **8.3**. Extensões: `pdo_mysql`, `mbstring`, `openssl`, `tokenizer`, `xml`, `ctype`, `fileinfo`, `bcmath`, `json`.
+2. **Banco:** Bancos de dados → MySQL → crie banco e usuário (nomes costumam ter o prefixo da conta, ex.: `gab51441_areaverde`) e associe com todos os privilégios.
+3. **Arquivos:** envie o ZIP pelo Gerenciador de arquivos (ou FTP) para algo como `/home1/SEU_USUARIO/area-verde/` e extraia.
+4. **Document root:** em Domínios, aponte a raiz do documento do domínio (ex.: `akaigupo.com.br`) para `.../area-verde/public`.
+5. **`.env`:** copie `.env.cpanel.example` para `.env`, preencha `APP_KEY` (passo abaixo), `DB_*` e confira `APP_URL`.
+
+### 3. Terminal do cPanel (na pasta do projeto)
+
+```bash
+php artisan key:generate
+php artisan migrate --force
+php artisan db:seed --force
+php artisan storage:link
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+```
+
+Se `storage:link` falhar (symlink desabilitado), as imagens de produto/brinde continuam acessíveis pelo Laravel em `/storage/...` (`filesystems.disks.public.serve`). Garanta permissão de escrita em `storage/` e `bootstrap/cache/`.
+
+O seed cria `admin@areaverde.local` / `senha123`. **Troque a senha no primeiro acesso.** Não rode `db:seed` de novo depois que houver dados reais — o seeder regrava usuários e dados de exemplo.
+
+### 4. Conferir
+
+- `https://seu-dominio/` abre a home
+- `/admin/login` e `/entrar` funcionam
+- CSS/JS carregam (`public/build` presente e `APP_URL` com `https`)
 
 ## Limitação conhecida
 
